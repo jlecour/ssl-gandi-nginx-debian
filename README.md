@@ -41,8 +41,6 @@ Nginx est une excellente terminaison SSL/TLS, surtout à partir de la version 1.
 Le type de système importe peut (tant qu'il ressemble à un Linux/Unix). Nous utiliserons Debian (wheezy) car c'est la distribution qui est sur nos serveurs à ce jour.
 
 # 1. Création du certificat
-
-
 ## Demande d'émission d'un certificat
 
 Il faut commencer par générer une clé privée (`*.crt`) et une demande de certificat (`*.csr`).
@@ -115,11 +113,48 @@ La clé privée ne doit être **communiquée à personne** et être stockée de 
     E0pV7+shRPoK7jguy6zzSHK1ygWnqTSn8TePgtIXOoVcZoH6jQBfcA==
     -----END RSA PRIVATE KEY-----
 
-## 2. Configuration du serveur
+# 2. Configuration du serveur
 
-### Diffie-Hellman Key Exchange
+## Organisation des fichiers
 
-Pour activer le mécanisme de **Perfect Forward Secrecy**, le serveur et le client doivent s'échanger un nombre premier pour l'échange de clé Diffie-Hellman. On va indiquer à Nginx quel nombre utiliser en générant un fichier le contenant, avec OpenSSL.
+La configuration de Nginx se fait via le fichier `/etc/nginx/nginx.conf`, dans lequel on trouve des réglages généraux. Il y aussi une section pour la partie `http` dans laquelle on trouve des sections `server`. Toutes ces sections sont appelées **bloc** car elles utilisent une syntaxe à base d'accolades et sont imbriquées.
+
+Par habitude on extrait souvent les blocs spécifiques aux sites et applications gérées dans des fichiers spécifiques, inclus dans la configuration principale par la directive `include`.
+
+Voici un exemple typique de configuration
+
+    user www-data;
+    worker_processes 32;
+    pid /var/run/nginx.pid;
+
+    events {
+      worker_connections 768;
+    }
+
+    http {
+      sendfile on;
+      tcp_nopush on;
+      tcp_nodelay on;
+      keepalive_timeout 65;
+
+      include /etc/nginx/mime.types;
+      default_type application/octet-stream;
+
+      access_log /var/log/nginx/access.log;
+      error_log /var/log/nginx/error.log;
+
+      include /etc/nginx/sites-enabled/*;
+    }
+
+Ici on voit que tous les fichiers présents dans `/etc/nginx/sites-enabled` sont automatiquement inclus.
+
+Nous allons placer notre configuration pour le site `www.example.com` dans `/etc/nginx/sites-enabled/www.example.com`
+
+Comme nous mettons en place un certificat SSL _wildcard_ pour le domaine, il est probable que nous réutilisions la partie SSL pour plusieurs configurations de sites. Nous la placerons alors dans `/etc/nginx/ssl/wildcard.example.com.conf`
+
+## Diffie-Hellman Key Exchange
+
+Pour activer le mécanisme de **Perfect Forward Secrecy**, le serveur et le client doivent utiliser  un nombre premier et un générateur pour l'échange de clé Diffie-Hellman. On indiquera à Nginx dans quel fichier se trouvent ces paramètres, générés avec OpenSSL.
 
 L'utilisation de 4096 bits est actuellement recommandée, mais il faut savoir que celà pose des soucis de compatibilité avec des anciens systèmes. Par exemple Java 6 ne supporte pas plus de 1024 bits.
 
@@ -142,7 +177,11 @@ La génération des paramètres DH peut prendre plusieurs minutes.
 
 On place ensuite ce texte dans `/etc/ssl/dhparam.pem` pour ensuite l'indiquer à Nginx.
 
+## Fichier des certificats agrafés (_stapling_)
 
+la plupart des clients qui se connecteront au serveur web voudront vérifier la non-révocation du certificat. 2 stratégies permettent cette vérification : via un fichier CRL (_Certificate Revocation List_), mais vu le nombre de certificats en circulation ça devient impraticable, ou alors via un interrogation OCSP (_Online Certificate Status Protocol_).
+
+Pour éviter au client de faire une requête additionnelle, le serveur peut mettre en cache le résultat de cette vérification et la servir directement au client. Pour celà il faut indiquer à Nginx la liste des certificats, concaténés dans un seul fichier.
 
 # Quelques ressources utiles
 
@@ -159,7 +198,7 @@ Julien est OpSec chez Mozilla. Il est l'auteur de "Server Side TLS" (mentionné 
 
 Un outil d'aide à la configuration de Apache/Nginx/HAProxy, basé sur les recommendations de "Server Side TLS".
 
-## [Cipherscan][cipherscan]
+## [CipherScan][cipherscan]
 
 Toujours par Julien Véhent pour analyser la configuration d'un domaine et faire des recommandations concrètes.
 
@@ -169,5 +208,5 @@ Très bon outil en mode web pour vérifier la configuration SSL/TLS d'un domaine
 
 [server-side-tls]: https://wiki.mozilla.org/Security/Server_Side_TLS "Server Side TLS"
 [ssllabs]: https://www.ssllabs.com/ssltest/analyze.html "SSLLabs"
-[cipherscan]: https://github.com/jvehent/cipherscan "Cipherscan"
+[cipherscan]: https://github.com/jvehent/cipherscan "CipherScan"
 [ssl-config-generator]: https://mozilla.github.io/server-side-tls/ssl-config-generator/ "SSL config generator"

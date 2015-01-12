@@ -41,11 +41,12 @@ Nginx est une excellente terminaison SSL/TLS, surtout à partir de la version 1.
 Le type de système importe peut (tant qu'il ressemble à un Linux/Unix). Nous utiliserons Debian (wheezy) car c'est la distribution qui est sur nos serveurs à ce jour.
 
 # 1. Création du certificat
+
 ## Demande d'émission d'un certificat
 
-Il faut commencer par générer une clé privée (`*.crt`) et une demande de certificat (`*.csr`).
+Il faut commencer par générer une clé privée (`*.key.pem`) et une demande de certificat (`*.csr.pem`).
 
-    → openssl req -nodes -newkey rsa:2048 -sha256 -keyout wildcard.example.com.crt -out wildcard.example.com.csr
+    → openssl req -nodes -newkey rsa:2048 -sha256 -keyout wildcard_example_com.key.pem -out wildcard_example_com.csr.pem
 
     Country Name (2 letter code) [AU]:FR
     State or Province Name (full name) [Some-State]:
@@ -62,7 +63,7 @@ Il faut commencer par générer une clé privée (`*.crt`) et une demande de cer
 
 Le contenu du CSR devra être transmis à Gandi.
 
-    → cat wildcard.example.com.csr
+    → cat wildcard_example_com.csr.pem
     -----BEGIN CERTIFICATE REQUEST-----
     MIICzzCCAbcCAQAwgYkxCzAJBgNVBAYTAkZSMRMwEQYDVQQIEwpTb21lLVN0YXRl
     MRIwEAYDVQQHEwlNYXJzZWlsbGUxFTATBgNVBAoTDEV4YW1wbGUgSW5jLjEWMBQG
@@ -84,7 +85,7 @@ Le contenu du CSR devra être transmis à Gandi.
 
 La clé privée ne doit être **communiquée à personne** et être stockée de manière **sécurisée** sur votre serveur. Ici, il s'agit d'un certificat factice donc il n'y a aucun risque à la dévoiler, ça aidera les étapes ultérieures.
 
-    → cat wildcard.example.com.crt
+    → cat wildcard_example_com.key.pem
     -----BEGIN RSA PRIVATE KEY-----
     MIIEpAIBAAKCAQEAo7XfASlLYpq6cuklUsXYCphVlXg4runs4bgh9WGQrnA/+SHw
     pjHI4dlkPH6sZ8kTVQDx0lB34RXFJPS103a3DQO/SNK/pKNehA7WKdNsN/6qLHEC
@@ -148,7 +149,7 @@ Voici un exemple typique de configuration
 
 Ici on voit que tous les fichiers présents dans `/etc/nginx/sites-enabled` sont automatiquement inclus.
 
-Nous allons placer notre configuration pour le site `www.example.com` dans `/etc/nginx/sites-enabled/www.example.com`
+Nous allons placer notre configuration pour le site `www.example.com` dans `/etc/nginx/sites-enabled/www_example_com.conf`
 
 Comme nous mettons en place un certificat SSL _wildcard_ pour le domaine, il est probable que nous réutilisions la partie SSL pour plusieurs configurations de sites. Nous la placerons alors dans `/etc/nginx/ssl/wildcard.example.com.conf`
 
@@ -185,6 +186,11 @@ Pour éviter au client de faire une requête additionnelle, le serveur peut mett
 
 # Quelques ressources utiles
 
+
+## [How 2 SSL][how2ssl]
+
+
+
 ## [Server-Side TLS][server-side-tls]
 
 Un long guide, très complet, à propos de la mise en place de TLS côté serveur, avec des explications concrètes et claires sur tous les éléments en jeu.
@@ -206,6 +212,7 @@ Toujours par Julien Véhent pour analyser la configuration d'un domaine et faire
 
 Très bon outil en mode web pour vérifier la configuration SSL/TLS d'un domaine.
 
+[how2ssl]: http://how2ssl.com "How 2 SSL"
 [server-side-tls]: https://wiki.mozilla.org/Security/Server_Side_TLS "Server Side TLS"
 [ssllabs]: https://www.ssllabs.com/ssltest/analyze.html "SSLLabs"
 [cipherscan]: https://github.com/jvehent/cipherscan "CipherScan"

@@ -4,15 +4,22 @@ Cet texte est encours à l'état de brouillon incomplet, plein d'approximations 
 Il me sert de planche d'écriture pour un guide.
 Il est accessible publiquement sur GitHub pour faciliter d'éventuelles contributions — sur le fond ou la forme.
 
+Tous les fichiers sont présents dans l'arborescence partant de [/etc](etc) : config Nginx, fichiers de certificat, …
+Ils correspondent à un vrai certificat, pour le domaine `www.example.com`, sauf que Gandi ne l'a jamais réellement généré et son contenu est bidon.
+
 # 0. Objectif
 
 L'objectif est de protéger les communications avec un serveur web, par un certificat, en respectant le plus possible les règles de l'art, mais dans un contexte précis :
 
-## certificat _wildcard_ SSLPro, délivré par Gandi
+## certificat _wildcard_ SSL Standard, délivré par Gandi
 
-Ce type de certificat permet, pour environ 250 €/an, de protéger avec un même certificat tous les sous-domaines d'un nom de domaine principal.
+Ce type de certificat coûte environ 120 €/an. Il permet de protéger avec un même certificat tous les sous-domaines (de premier niveau) d'un nom de domaine principal.
 
-Il est délivré assez rapidement, mais nécessite des vérifications ; documents à fournir et validations des coordonnées du porteur.
+Il est délivré automatiquement et assez rapidement (moins d'1 heure).
+
+Vous pouvez aussi opter pour un certificat **SSL Pro** (_wildcard_ ou pas). Il coûtera plus cher, nécessitera une vérification de documents, mais vous apporte une garantie financière.
+
+La procédure décrite ici concerne donc un certificat **SSL Standard**. Dans la plupart des cas elle est identique pour un **SSL Pro** mais je préciserai lorsque c'est différent.
 
 ## niveau _intermédiaire_
 
@@ -28,7 +35,7 @@ Nous allons choisir SHA-2 pour être plus "compatible" avec la tendance des navi
 
 ### HSTS: HTTP Strict Transport Security
 
-Si votre site ne doit être consultable qu'en HTTPS, cet en-tête HTTP permettra de s'assurer que les navigateurs refuseront toute connexion non chiffrée sur votre domaine.
+Si votre site ne doit être consultable qu'en HTTPS, cet en-tête HTTP permettra de s'assurer que les navigateurs refuseront toute connexion non chiffrée sur votre domaine. La valeur conseillée est d'au moins 180 jours, mais c'est souvent 365 jours que l'on rencontre dans la configuration.
 
 Ça n'est pas non plus obligatoire pour la configuration **intermediate** mais nous allons l'appliquer quand même.
 
@@ -41,6 +48,13 @@ Nginx est une excellente terminaison SSL/TLS, surtout à partir de la version 1.
 Le type de système importe peut (tant qu'il ressemble à un Linux/Unix). Nous utiliserons Debian (wheezy) car c'est la distribution qui est sur nos serveurs à ce jour.
 
 # 1. Création du certificat
+
+## Formats de certificats
+
+Les certificats sont fréquemment stockés dans un de ces 2 formats : **DER** et **PEM**.
+Nous allons surtout manipuler des certificats, clés, chaînes de certificats, … au format **PEM**.
+
+Les outils fournis par OpenSSL facilitent la conversion d'un format à l'autre.
 
 ## Demande d'émission d'un certificat
 
@@ -114,9 +128,68 @@ La clé privée ne doit être **communiquée à personne** et être stockée de 
     E0pV7+shRPoK7jguy6zzSHK1ygWnqTSn8TePgtIXOoVcZoH6jQBfcA==
     -----END RSA PRIVATE KEY-----
 
+Gandi propose une vérification par enregistrement DNS, par fichier texte ou par envoi d'un e-mail.
+Chacune a bien sûr ses avantages et inconvénients.
+
+Si votre serveur est déjà configuré (hors HTTPS) ou si vous avez déjà un compte mail admin@example.com, alors ces 2 méthodes sont les plus rapides.
+
+Sinon, l'enregistrement DNS vous permet de préparer tout ça même si le reste de votre infrastructure n'est pas encore prêt. La première vérification n'intervient par contre que 25 minutes après la demande de création du certificat (puis toutes les 5 minutes jusqu'au succès). Ça vous permet de créer l'enregistrement dans la zone DNS et qu'elle se propage.
+
+Une fois la validation faite, vous pouvez récupérer votre certificat, à stocker dans `/etc/ssl/certs/wildcard_example_com.crt.pem`.
+
 # 2. Configuration du serveur
 
-## Organisation des fichiers
+## Diffie-Hellman Key Exchange
+
+Pour activer le mécanisme de **Perfect Forward Secrecy**, le serveur et le client doivent utiliser  un nombre premier et un générateur pour l'échange de clé Diffie-Hellman. On indiquera à Nginx dans quel fichier se trouvent ces paramètres, générés avec OpenSSL.
+
+L'utilisation de 4096 bits est actuellement recommandée, mais il faut savoir que celà pose des soucis de compatibilité avec des anciens systèmes. Par exemple Java 6 ne supporte pas plus de 1024 bits.
+
+La génération des paramètres DH peut prendre plusieurs minutes.
+
+    → openssl dhparam -rand – 4096 -out /etc/ssl/dhparam.pem
+    
+Ça donnera un fichier de ce genre :
+
+    -----BEGIN DH PARAMETERS-----
+    MZ9wdNIzSPihtIKQLMBF1GS6UJKjIQznU06XeY0d5u4LanYngWCTFPaa3MqN9h/Z
+    ThWGYMx7Aa6I82Tao0my2ee6jvOC5yc9dSEW51cjHdhjASzhtUEoIXLGTasfp2QF
+    ZA85bq8/iU/n8qGYvSk5ieP1xhOI07YxaReER/0wmG9rHIBrnYn2j5nYSxfcPfsQ
+    oqzyJPg+dp7vifJAWxj/2jkzbUK9Ij3hHiFitdNCmqRqCpIjrU6Zq+ZenRz9T3KE
+    8PhK6yAqCQriNWFcWJ9lubNC792n7qbTFrUw/xT732AK5BD2BuliSlo6Oy6La0zQ
+    QZK68V0RM3hBt6CVQ80vfhYmT+3f54gNB9jfeHCwqLCYotWdmO7Q03FR+mgA4Zhg
+    Cb1aqQMsqmIbUEWArsZqkCQ0qC4EiGLGMtYE4Cawiss6I8im2g0oHCC9CF/N7A/Y
+    YE8LxxdYP39RpnYEYEpd08nnIw8cML08vhuu++duXdhsOQMnMOENi2B8g4NtGKSr
+    lJ4WezMYNUM9hffYnVDIE+pXoL+snC9ye6xr3yMg6ym3aVrsofAanKIEkYNNsPf1
+    RXeXw8u33gtWvnqnnNrwfk0Q5H2gaAqOCntIrbE68Zn5+WGKWfW3w1mP/U+TRExx
+    A/q9Cm/STK80ZQkdnfdm7qnJFG/+vJ7LTdIN4L1vMxkaMg2c5q63FQpdPCAQI=
+    -----END DH PARAMETERS-----
+
+## Fichier des certificats agrafés (_stapling_)
+
+La plupart des clients qui se connecteront au serveur web voudront vérifier la non-révocation du certificat. 2 stratégies permettent cette vérification : via un fichier CRL (_Certificate Revocation List_), mais vu le nombre de certificats en circulation ça devient impraticable, ou alors via un interrogation OCSP (_Online Certificate Status Protocol_).
+
+Pour éviter au client de faire une requête additionnelle, le serveur peut mettre en cache le résultat de cette vérification et la servir directement au client. Pour cela il faut indiquer à Nginx la liste des certificats, concaténés dans un seul fichier.
+
+Les certificats doivent être dans l'ordre de la hiérarchie, en partant de celui qui a signé notre certificat (ici `GandiStandardSSLCA2`) et en remontant jusqu'à la racine.
+
+Nous allons placer ce fichier ici : `/etc/ssl/certs/gandi-standardssl-2.chain.pem`
+
+    → echo -n '' > /etc/ssl/certs/gandi-standardssl-2.chain.pem \
+    && wget -O - https://www.gandi.net/static/CAs/GandiStandardSSLCA2.pem | tee -a /etc/ssl/certs/gandi-standardssl-2.chain.pem> /dev/null \
+    && wget -O - http://crt.usertrust.com/USERTrustRSAAddTrustCA.crt | openssl x509 -inform DER -outform PEM | tee -a /etc/ssl/certs/gandi-standardssl-2.chain.pem> /dev/null \
+    && cat ssl/certs/AddTrust_External_Root.pem | tee -a /etc/ssl/certs/gandi-standardssl-2.chain.pem
+
+Explications :
+
+- le premier `echo` s'assure que le fichier commence vide ;
+- le certificat de Gandi est directement au format `PEM`, on l'ajoute simplement ;
+- le certificat _cross-signed_ est au format `DER` il faut donc le convertir avant de l'ajouter ;
+- enfin le certificat racine est présent sur notre serveur, on l'ajoute à la fin.
+
+L'utilisation de `tee` permet d'ajouter un `sudo` si besoin.
+
+## Nginx
 
 La configuration de Nginx se fait via le fichier `/etc/nginx/nginx.conf`, dans lequel on trouve des réglages généraux. Il y aussi une section pour la partie `http` dans laquelle on trouve des sections `server`. Toutes ces sections sont appelées **bloc** car elles utilisent une syntaxe à base d'accolades et sont imbriquées.
 
@@ -124,6 +197,7 @@ Par habitude on extrait souvent les blocs spécifiques aux sites et applications
 
 Voici un exemple typique de configuration
 
+    → cat /etc/nginx/nginx.conf
     user www-data;
     worker_processes 32;
     pid /var/run/nginx.pid;
@@ -151,67 +225,159 @@ Ici on voit que tous les fichiers présents dans `/etc/nginx/sites-enabled` sont
 
 Nous allons placer notre configuration pour le site `www.example.com` dans `/etc/nginx/sites-enabled/www_example_com.conf`
 
-Comme nous mettons en place un certificat SSL _wildcard_ pour le domaine, il est probable que nous réutilisions la partie SSL pour plusieurs configurations de sites. Nous la placerons alors dans `/etc/nginx/ssl/wildcard.example.com.conf`
+    → cat /etc/nginx/sites-enabled/www_example_com.conf
+    server {
+      listen 80;
+      rewrite ^ https://$host$request_uri? permanent;
+    }
+    server {
+      listen 443 ssl;
+  
+      server_name www.example.com;
+  
+      include /etc/nginx/wildcard_example_com.conf;
+  
+      root /var/www/example;
+      index index.htm index.html;
+    }
 
-## Diffie-Hellman Key Exchange
+Comme nous mettons en place un certificat SSL _wildcard_ pour le domaine, il est probable que nous réutilisions la partie SSL pour plusieurs configurations de sites. Nous la placerons alors dans `/etc/nginx/wildcard_example_com.conf`
 
-Pour activer le mécanisme de **Perfect Forward Secrecy**, le serveur et le client doivent utiliser  un nombre premier et un générateur pour l'échange de clé Diffie-Hellman. On indiquera à Nginx dans quel fichier se trouvent ces paramètres, générés avec OpenSSL.
+    → cat /etc/nginx/wildcard_example_com.conf
+    ssl_certificate /etc/ssl/certs/wildcard_example_com.crt.pem;
+    ssl_certificate_key /etc/ssl/private/wildcard_example_com.key.pem;
+    
+    ssl_session_timeout 5m;
+    ssl_session_cache shared:SSL:50m;
+    
+    ssl_dhparam /etc/ssl/dhparam.pem;
+    
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    ssl_ciphers 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA';
+    ssl_prefer_server_ciphers on;
+    
+    ssl_stapling on;
+    ssl_stapling_verify on;
+    ssl_trusted_certificate /etc/ssl/gandi-standardssl-2.chain.pem;
+    
+    resolver 127.0.0.1;
 
-L'utilisation de 4096 bits est actuellement recommandée, mais il faut savoir que celà pose des soucis de compatibilité avec des anciens systèmes. Par exemple Java 6 ne supporte pas plus de 1024 bits.
+Les 2 premières lignes concernent les fichiers servant à chiffrer la connexion : le certificat et la clé privée.
 
-La génération des paramètres DH peut prendre plusieurs minutes.
+`ssl_session_timeout` et `ssl_session_cache` permettent de préciser où, quelle quantité et combien de temps garder les sessions SSL. J'ai appliqué ici les recommandations de [Server-Side TLS][server-side-tls].
 
-    → openssl dhparam -rand – 4096
-    -----BEGIN DH PARAMETERS-----
-    MZ9wdNIzSPihtIKQLMBF1GS6UJKjIQznU06XeY0d5u4LanYngWCTFPaa3MqN9h/Z
-    ThWGYMx7Aa6I82Tao0my2ee6jvOC5yc9dSEW51cjHdhjASzhtUEoIXLGTasfp2QF
-    ZA85bq8/iU/n8qGYvSk5ieP1xhOI07YxaReER/0wmG9rHIBrnYn2j5nYSxfcPfsQ
-    oqzyJPg+dp7vifJAWxj/2jkzbUK9Ij3hHiFitdNCmqRqCpIjrU6Zq+ZenRz9T3KE
-    8PhK6yAqCQriNWFcWJ9lubNC792n7qbTFrUw/xT732AK5BD2BuliSlo6Oy6La0zQ
-    QZK68V0RM3hBt6CVQ80vfhYmT+3f54gNB9jfeHCwqLCYotWdmO7Q03FR+mgA4Zhg
-    Cb1aqQMsqmIbUEWArsZqkCQ0qC4EiGLGMtYE4Cawiss6I8im2g0oHCC9CF/N7A/Y
-    YE8LxxdYP39RpnYEYEpd08nnIw8cML08vhuu++duXdhsOQMnMOENi2B8g4NtGKSr
-    lJ4WezMYNUM9hffYnVDIE+pXoL+snC9ye6xr3yMg6ym3aVrsofAanKIEkYNNsPf1
-    RXeXw8u33gtWvnqnnNrwfk0Q5H2gaAqOCntIrbE68Zn5+WGKWfW3w1mP/U+TRExx
-    A/q9Cm/STK80ZQkdnfdm7qnJFG/+vJ7LTdIN4L1vMxkaMg2c5q63FQpdPCAQI=
-    -----END DH PARAMETERS-----
+`ssl_dhparam` indique l'emplacement du fichier des paramètres (généré plus haut) pour l'échange de clé Diffie-Hellman. Nous verrons un peu plus loin comment générer ce fichier.
 
-On place ensuite ce texte dans `/etc/ssl/dhparam.pem` pour ensuite l'indiquer à Nginx.
+`ssl_protocols` est la liste des protocoles acceptés par le serveur. À ce jour, seuls les versions `TLSv1`, `TLSv1.1` et `TLSv1.2` de TLS sont acceptables. Plus d'info sur l'[historique de SSL/TLS](http://fr.wikipedia.org/wiki/Transport_Layer_Security#Historique) sur Wikipedia. Les failles récentes de `SSLv3` nous on poussé à le retirer autant que possible des listes de protocoles utilisés.
 
-## Fichier des certificats agrafés (_stapling_)
+`ssl_stapling` et `ssl_stapling_verify` permettent d'activer la fonction de **OCSP stapling**, expliquée plus loin. `ssl_trusted_certificate` indique à Nginx où trouver le fichier de la chaîne de certificats (généré plus haut).
 
-la plupart des clients qui se connecteront au serveur web voudront vérifier la non-révocation du certificat. 2 stratégies permettent cette vérification : via un fichier CRL (_Certificate Revocation List_), mais vu le nombre de certificats en circulation ça devient impraticable, ou alors via un interrogation OCSP (_Online Certificate Status Protocol_).
+Enfin, `resolver` indique l'adresse qu'il faut interroger pour les résolutions de nom servant à la vérification de validité des certificats parents, via le protocole `OCSP`.
 
-Pour éviter au client de faire une requête additionnelle, le serveur peut mettre en cache le résultat de cette vérification et la servir directement au client. Pour celà il faut indiquer à Nginx la liste des certificats, concaténés dans un seul fichier.
+# 3. Vérifications
+
+Pendant toute la durée des vérifications, je conseille de suivre les logs d'erreur de Nginx.
+Si une erreur s'est glissée quelque part, vous aurez plus de chance de la repérer comme ça.
+Il se peut par exemple que l'adresse du resolver ne soit pas bonne (vécu sur un serveur sans resolver local).
+
+    → tail -f /var/log/nginx/error.log
+
+Une fois tout ceci configuré, il faut vérifier la configuration de Nginx et la recharger si tout va bien :
+
+    → service nginx configtest
+    → service nginx reload
+
+## Dans un navigateur
+
+Le 1er test le plus simple est de se rendre à l'adresse du site via un navigateur. La plupart d'entre eux a un signe distinctif dans la barre d'adresse qui indique si la navigation est chiffrée ou pas t si l certificat utilisé est correctement configuré.
+
+Dans Chrome par exemple si vous avez un joli cadenas vert, tout va bien.
+S'il est gris avec un triangle jaune, c'est presque bon mais il y a des obstacle à une navigation proprement chiffrée de bout en bout (certificat trop faible, sous-requêtes non chiffrées …).
+S'il est rouge et/ou barré, alors quelque chose ne va pas du tout.
+
+Et si aucun cadenas n'apparaît, c'est que la communication n'est pas chiffrée du tout.
+
+## Avec [SSLLabs][ssllabs]
+
+Très bon outil en mode web pour vérifier la configuration SSL/TLS d'un domaine. Vous indiquez votre domaine et au bout d'une poignée de minute il vous rend un rapport complet.
+
+Une note synthétique vous indique la qualité de votre configuration.
+Des conseils vous indiquent ce qu'il faut améliorer.
+Le détail de toutes les constations vos permet de savoir exactement ce qu'il en est.
+
+## Avec [CipherScan][cipherscan]
+
+Il s'agit de quelques outils, écrits par [Julien Véhent][jvehent], pour analyser la configuration d'un domaine et faire des recommandations concrètes.
+
+`cipherscan` est un script qui vous indique quelle est la configuration du certificat
+
+    → ./cipherscan www.example.com
+    ........................
+    Target: www.example.com:443
+
+    prio  ciphersuite                  protocols              pfs_keysize
+    1     ECDHE-RSA-AES128-GCM-SHA256  TLSv1.2                ECDH,P-256,256bits
+    2     ECDHE-RSA-AES256-GCM-SHA384  TLSv1.2                ECDH,P-256,256bits
+    3     DHE-RSA-AES128-GCM-SHA256    TLSv1.2                DH,4096bits
+    4     DHE-RSA-AES256-GCM-SHA384    TLSv1.2                DH,4096bits
+    5     ECDHE-RSA-AES128-SHA256      TLSv1.2                ECDH,P-256,256bits
+    6     ECDHE-RSA-AES128-SHA         TLSv1,TLSv1.1,TLSv1.2  ECDH,P-256,256bits
+    7     ECDHE-RSA-AES256-SHA384      TLSv1.2                ECDH,P-256,256bits
+    8     ECDHE-RSA-AES256-SHA         TLSv1,TLSv1.1,TLSv1.2  ECDH,P-256,256bits
+    9     DHE-RSA-AES128-SHA256        TLSv1.2                DH,4096bits
+    10    DHE-RSA-AES128-SHA           TLSv1,TLSv1.1,TLSv1.2  DH,4096bits
+    11    DHE-RSA-AES256-SHA256        TLSv1.2                DH,4096bits
+    12    DHE-RSA-AES256-SHA           TLSv1,TLSv1.1,TLSv1.2  DH,4096bits
+    13    AES128-GCM-SHA256            TLSv1.2
+    14    AES256-GCM-SHA384            TLSv1.2
+    15    AES128-SHA256                TLSv1.2
+    16    AES256-SHA256                TLSv1.2
+    17    AES128-SHA                   TLSv1,TLSv1.1,TLSv1.2
+    18    AES256-SHA                   TLSv1,TLSv1.1,TLSv1.2
+    19    DHE-RSA-CAMELLIA256-SHA      TLSv1,TLSv1.1,TLSv1.2  DH,4096bits
+    20    CAMELLIA256-SHA              TLSv1,TLSv1.1,TLSv1.2
+    21    DHE-RSA-CAMELLIA128-SHA      TLSv1,TLSv1.1,TLSv1.2  DH,4096bits
+    22    CAMELLIA128-SHA              TLSv1,TLSv1.1,TLSv1.2
+    23    DES-CBC3-SHA                 TLSv1,TLSv1.1,TLSv1.2
+
+    Certificate: trusted, 2048 bit, sha256WithRSAEncryption signature
+    TLS ticket lifetime hint: 300
+    OCSP stapling: supported
+    Server side cipher ordering
+
+`analyze.py` est un script qui vous indique si votre certificat respecte le niveau souhaité
+
+    → ./analyze.py -l intermediate -t www.example.com
+    www.example.com:443 has intermediate ssl/tls
+    and complies with the 'intermediate' level
+
+Ce dernier peut être exécuté en _mode Nagios_ afin d'automatiser des tests régulier et émettre des alertes si la conformité était compromise.
 
 # Quelques ressources utiles
 
 
-## [How 2 SSL][how2ssl]
+## [How 2 SSL][how2ssl] (en anglais)
 
+Une sorte de mini-wiki sur le SSL avec des clarifications et des approfondissements de certains concepts clés.
 
+## [Je Veux HTTPS][jeveuxhttps] (en français)
 
-## [Server-Side TLS][server-side-tls]
+Un bon site, écrit en français. Si je ne l'avais pas découvert tardivement, je n'aurais probablement pas écrit cet article.
+
+## [Server-Side TLS][server-side-tls] (en anglais)
 
 Un long guide, très complet, à propos de la mise en place de TLS côté serveur, avec des explications concrètes et claires sur tous les éléments en jeu.
 
-## [TLS with Nginx and StartSSL](https://jve.linuxwall.info/blog/index.php?post/2013/10/12/A-grade-SSL/TLS-with-Nginx-and-StartSSL)
+## [TLS with Nginx and StartSSL](https://jve.linuxwall.info/blog/index.php?post/2013/10/12/A-grade-SSL/TLS-with-Nginx-and-StartSSL) (en anglais)
 
-Un article de Julien Véhent sur un thème similaire.
+Un article de [Julien Véhent][jvehent] sur un thème similaire.
 Julien est OpSec chez Mozilla. Il est l'auteur de "Server Side TLS" (mentionné plus haut)
 
-## [SSL config generator][ssl-config-generator]
+## [SSL config generator][ssl-config-generator] (en anglais)
 
 Un outil d'aide à la configuration de Apache/Nginx/HAProxy, basé sur les recommendations de "Server Side TLS".
 
-## [CipherScan][cipherscan]
-
-Toujours par Julien Véhent pour analyser la configuration d'un domaine et faire des recommandations concrètes.
-
-## [SSLLabs][ssllabs] par Qualys
-
-Très bon outil en mode web pour vérifier la configuration SSL/TLS d'un domaine.
-
+[jvehent]: http://jve.linuxwall.info/ "Julien Véhent"
 [how2ssl]: http://how2ssl.com "How 2 SSL"
 [server-side-tls]: https://wiki.mozilla.org/Security/Server_Side_TLS "Server Side TLS"
 [ssllabs]: https://www.ssllabs.com/ssltest/analyze.html "SSLLabs"

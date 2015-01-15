@@ -1,13 +1,15 @@
 # README
 
-Cet texte est encours à l'état de brouillon incomplet, plein d'approximations et de trous.
-Il me sert de planche d'écriture pour un guide.
-Il est accessible publiquement sur GitHub pour faciliter d'éventuelles contributions — sur le fond ou la forme.
+Cet texte est en cours à l'état de **brouillon**.
+
+Je découvre le sujet, j'ai donc probablement fait des confusions, raté des conventions, mélangé des concepts, et peut-être même insulté des divinités.
+
+N'hésitez pas à utiliser tous les moyens nécessaires ([issue](https://github.com/jlecour/ssl-gandi-nginx-debian/issues/new) ou [pull-request](https://github.com/jlecour/ssl-gandi-nginx-debian/pulls) GitHub, [twitter][jlecour], mail …) pour me faire vos retours, sur le fond comme sur la forme.
 
 Tous les fichiers sont présents dans l'arborescence partant de [/etc](etc) : config Nginx, fichiers de certificat, …
 Ils correspondent à un vrai certificat, pour le domaine `www.example.com`, sauf que Gandi ne l'a jamais réellement généré et son contenu est bidon.
 
-# 0. Objectif
+# 1. Objectif
 
 L'objectif est de protéger les communications avec un serveur web, par un certificat, en respectant le plus possible les règles de l'art, mais dans un contexte précis :
 
@@ -33,6 +35,8 @@ Au niveau **intermediate** nous avons le choix entre des certificats SHA-1 ou SH
 
 Nous allons choisir SHA-2 pour être plus "compatible" avec la tendance des navigateurs récents. [Google déprécie progressivement les certificats SHA-1](http://blog.chromium.org/2014/09/gradually-sunsetting-sha-1.html).
 
+Pour les certificats SHA-2, certains navigateurs n'ont pas encore ajoutés les certificats racines. Il est donc prudent de les rajouter manuellement dans les chaînes. Le [Wiki de Gandi](http://wiki.gandi.net/fr/ssl/intermediate) apporte plus de précision à propos de la récupération des certificats intermédiaires.
+
 ### HSTS: HTTP Strict Transport Security
 
 Si votre site ne doit être consultable qu'en HTTPS, cet en-tête HTTP permettra de s'assurer que les navigateurs refuseront toute connexion non chiffrée sur votre domaine. La valeur conseillée est d'au moins 180 jours, mais c'est souvent 365 jours que l'on rencontre dans la configuration.
@@ -47,7 +51,7 @@ Nginx est une excellente terminaison SSL/TLS, surtout à partir de la version 1.
 
 Le type de système importe peut (tant qu'il ressemble à un Linux/Unix). Nous utiliserons Debian (wheezy) car c'est la distribution qui est sur nos serveurs à ce jour.
 
-# 1. Création du certificat
+# 2. Création du certificat
 
 ## Formats de certificats
 
@@ -137,7 +141,8 @@ Sinon, l'enregistrement DNS vous permet de préparer tout ça même si le reste 
 
 Une fois la validation faite, vous pouvez récupérer votre certificat, à stocker dans `/etc/ssl/certs/wildcard_example_com.crt.pem`.
 
-# 2. Configuration du serveur
+
+# 3. Configuration du serveur
 
 ## Diffie-Hellman Key Exchange
 
@@ -165,6 +170,49 @@ La génération des paramètres DH peut prendre plusieurs minutes.
     A/q9Cm/STK80ZQkdnfdm7qnJFG/+vJ7LTdIN4L1vMxkaMg2c5q63FQpdPCAQI=
     -----END DH PARAMETERS-----
 
+## Hiérarchie des certificats
+
+Le principe des certificats ressemble à un arbre. Il y a quelques **certificats racines** à partir desquels on peut générer d'autres certificats.
+Généralement, ce sont des certificats intermédiaires, servant eux-aussi à faire d'autres certificats intermédiaires ou finaux.
+
+Dans notre cas, nous avons :
+
+0. la racine `AddTrust External Root`
+1. la branche `USERTrust RSA AddTrust CA`
+2. la branche `Gandi Standard SSL CA2`
+3. la feuille `*.example.com`
+
+Notez bien cet ordre car il nous servira pour les 2 fichiers de chaîne.
+
+## Fichier de la chaîne de certificats
+
+Il est nécessaire d'indiquer au serveur web, non pas simplement le certificat du domaine, mais également ses certificats intermédiaires.
+
+Nous allons créer un fichier `/etc/ssl/certs/wildcard_example_com.chain.pem` qui contiendra, dans l'ordre :
+
+- le certificat généré par Gandi (**feuille 3**) ;
+- le certificat intermédiaire de Gandi (**branche 2**) ;
+- le certificat _cross-signed_ (**branche 1**).
+
+Voici la commande pour générer ce fichier :
+
+    → cd /etc/ssl/certs/ \
+    && echo -n '' > wildcard_example_com.chain.pem \
+    && cat wildcard_example_com.chain.pem | tee -a wildcard_example_com.chain.pem \
+    && wget -O - https://www.gandi.net/static/CAs/GandiStandardSSLCA2.pem | tee -a wildcard_example_com.chain.pem> /dev/null \
+    && wget -O - http://crt.usertrust.com/USERTrustRSAAddTrustCA.crt | openssl x509 -inform DER -outform PEM | tee -a wildcard_example_com.chain.pem> /dev/null
+
+Explications :
+
+- on se déplace dans `/etc/ssl/certs` où out va se passer ;
+- le premier `echo` s'assure que le fichier commence vide ;
+- le certificat du domaine (directement au format `PEM`) ;
+- le certificat de Gandi (directement au format `PEM`) ;
+- le certificat _cross-signed_ (au format `DER` il faut donc le convertir avant de l'ajouter) ;
+- l'utilisation de `tee` permet d'ajouter un `sudo` si besoin.
+
+Pour des certificats **SSL Pro**, le certificat intermédiaire de Gandi est différent, mais le principe est le même.
+
 ## Fichier des certificats agrafés (_stapling_)
 
 La plupart des clients qui se connecteront au serveur web voudront vérifier la non-révocation du certificat. 2 stratégies permettent cette vérification : via un fichier CRL (_Certificate Revocation List_), mais vu le nombre de certificats en circulation ça devient impraticable, ou alors via un interrogation OCSP (_Online Certificate Status Protocol_).
@@ -173,21 +221,49 @@ Pour éviter au client de faire une requête additionnelle, le serveur peut mett
 
 Les certificats doivent être dans l'ordre de la hiérarchie, en partant de celui qui a signé notre certificat (ici `GandiStandardSSLCA2`) et en remontant jusqu'à la racine.
 
-Nous allons placer ce fichier ici : `/etc/ssl/certs/gandi-standardssl-2.chain.pem`
+Nous allons créer le fichier `/etc/ssl/certs/gandi-standardssl-2.chain.pem` qui contiendra, dans l'ordre :
 
-    → echo -n '' > /etc/ssl/certs/gandi-standardssl-2.chain.pem \
-    && wget -O - https://www.gandi.net/static/CAs/GandiStandardSSLCA2.pem | tee -a /etc/ssl/certs/gandi-standardssl-2.chain.pem> /dev/null \
-    && wget -O - http://crt.usertrust.com/USERTrustRSAAddTrustCA.crt | openssl x509 -inform DER -outform PEM | tee -a /etc/ssl/certs/gandi-standardssl-2.chain.pem> /dev/null \
-    && cat ssl/certs/AddTrust_External_Root.pem | tee -a /etc/ssl/certs/gandi-standardssl-2.chain.pem
+- le certificat intermédiaire de Gandi (**branche 2**) ;
+- le certificat _cross-signed_ (**branche 1**);
+- le certificat racine (**racine 0**).
 
-Explications :
+Voici la commande :
 
-- le premier `echo` s'assure que le fichier commence vide ;
-- le certificat de Gandi est directement au format `PEM`, on l'ajoute simplement ;
-- le certificat _cross-signed_ est au format `DER` il faut donc le convertir avant de l'ajouter ;
-- enfin le certificat racine est présent sur notre serveur, on l'ajoute à la fin.
+    → cd /etc/ssl/certs/ \
+    && echo -n '' > gandi-standardssl-2.chain.pem \
+    && wget -O - https://www.gandi.net/static/CAs/GandiStandardSSLCA2.pem | tee -a gandi-standardssl-2.chain.pem> /dev/null \
+    && wget -O - http://crt.usertrust.com/USERTrustRSAAddTrustCA.crt | openssl x509 -inform DER -outform PEM | tee -a gandi-standardssl-2.chain.pem> /dev/null \
+    && cat AddTrust_External_Root.pem | tee -a gandi-standardssl-2.chain.pem
 
-L'utilisation de `tee` permet d'ajouter un `sudo` si besoin.
+## Récapitulatif des fichiers de certificats.
+
+### `/etc/ssl/certs/gandi-standardssl-2.chain.pem`
+
+C'est la chaîne des certificats à utiliser pour _OCSP stapling_. Ce fichier peut être utilisé par plusieurs certificats **Gandi Standard SSL**.
+
+Il n'est pas indispensable pour faire fonctionner le domaine en HTTPS mais c'est utile pour les performances du site.
+
+### `/etc/ssl/certs/wildcard_example_com.chain.pem` 
+
+Il contient le certificat du domaine, plus ses certificats intermédiaires.
+
+### `/etc/ssl/certs/wildcard_example_com.crt.pem`
+
+Il contient seulement le certificat du domaine. Il ne sera pas utilisé directement par le serveur web, mais il est pratique de le garder.
+
+### `/etc/ssl/private/wildcard_example_com.csr.pem`
+
+C'est la demande du certificat. Il est inutile sur le serveur, mais il peut être pratique pour vérifier pus tard comment la demande initiale a été faite.
+
+### `/etc/ssl/private/wildcard_example_com.key.pem`
+
+C'est la clé privée du certificat. Ce fichier est indispensable.
+
+### droits d'accès
+
+La clé privée doit n'être accessible qu'aux administrateurs et au processus du serveur web.
+
+Les fichiers dans `/etc/ssl/certs` peuvent être accessible en lecture à tout le monde, mais seulement aux administrateurs pour l'écriture.
 
 ## Nginx
 
@@ -274,11 +350,11 @@ Les 2 premières lignes concernent les fichiers servant à chiffrer la connexion
 
 Enfin, `resolver` indique l'adresse qu'il faut interroger pour les résolutions de nom servant à la vérification de validité des certificats parents, via le protocole `OCSP`.
 
-# 3. Vérifications
+# 4. Vérifications
 
 Pendant toute la durée des vérifications, je conseille de suivre les logs d'erreur de Nginx.
 Si une erreur s'est glissée quelque part, vous aurez plus de chance de la repérer comme ça.
-Il se peut par exemple que l'adresse du resolver ne soit pas bonne (vécu sur un serveur sans resolver local).
+Il se peut par exemple que l'adresse du _resolver_ ne soit pas bonne (vécu sur un serveur sans _resolver_ local).
 
     → tail -f /var/log/nginx/error.log
 
@@ -308,6 +384,8 @@ Le détail de toutes les constations vos permet de savoir exactement ce qu'il en
 ## Avec [CipherScan][cipherscan]
 
 Il s'agit de quelques outils, écrits par [Julien Véhent][jvehent], pour analyser la configuration d'un domaine et faire des recommandations concrètes.
+
+### cipherscan
 
 `cipherscan` est un script qui vous indique quelle est la configuration du certificat
 
@@ -345,6 +423,10 @@ Il s'agit de quelques outils, écrits par [Julien Véhent][jvehent], pour analys
     OCSP stapling: supported
     Server side cipher ordering
 
+Il sait également exporter ses résultats au format JSON.
+
+### analyze.py
+
 `analyze.py` est un script qui vous indique si votre certificat respecte le niveau souhaité
 
     → ./analyze.py -l intermediate -t www.example.com
@@ -352,6 +434,14 @@ Il s'agit de quelques outils, écrits par [Julien Véhent][jvehent], pour analys
     and complies with the 'intermediate' level
 
 Ce dernier peut être exécuté en _mode Nagios_ afin d'automatiser des tests régulier et émettre des alertes si la conformité était compromise.
+
+En plus d'analyser un site en direct, il sait utiliser en entrée un fichier JSON local (sorti de `cipherscan`), mais aussi exporter ses propres résultats dans un fichier JSON (pour par exemple garder un historique structuré des conclusions).
+
+### openssl
+
+Des version binaires d'OpenSSL sont fournies au cas où le système hôte n'en dispose pas où si elle est problématique. C'est notamment le cas pour Mac OS X.
+
+Aussi bien `cipherscan` que `analyze.py` peuvent utiliser la version du système ou une version spécifique (avec l'option `-o`).
 
 # Quelques ressources utiles
 
@@ -371,15 +461,17 @@ Un long guide, très complet, à propos de la mise en place de TLS côté serveu
 ## [TLS with Nginx and StartSSL](https://jve.linuxwall.info/blog/index.php?post/2013/10/12/A-grade-SSL/TLS-with-Nginx-and-StartSSL) (en anglais)
 
 Un article de [Julien Véhent][jvehent] sur un thème similaire.
-Julien est OpSec chez Mozilla. Il est l'auteur de "Server Side TLS" (mentionné plus haut)
+Julien est OpSec chez Mozilla. Il est l'auteur de [Server-Side TLS][server-side-tls].
 
 ## [SSL config generator][ssl-config-generator] (en anglais)
 
-Un outil d'aide à la configuration de Apache/Nginx/HAProxy, basé sur les recommendations de "Server Side TLS".
+Un outil d'aide à la configuration de Apache/Nginx/HAProxy, basé sur les recommandations de [Server-Side TLS][server-side-tls].
 
+[jeveuxhttps]: https://www.jeveuxhttps.fr/ "Je Veux HTTPS"
 [jvehent]: http://jve.linuxwall.info/ "Julien Véhent"
 [how2ssl]: http://how2ssl.com "How 2 SSL"
 [server-side-tls]: https://wiki.mozilla.org/Security/Server_Side_TLS "Server Side TLS"
 [ssllabs]: https://www.ssllabs.com/ssltest/analyze.html "SSLLabs"
 [cipherscan]: https://github.com/jvehent/cipherscan "CipherScan"
 [ssl-config-generator]: https://mozilla.github.io/server-side-tls/ssl-config-generator/ "SSL config generator"
+[jlecour]: https://twitter.com/jlecour "@jlecour"

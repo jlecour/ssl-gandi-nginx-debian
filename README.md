@@ -13,7 +13,7 @@ Ils correspondent à un vrai certificat, pour le domaine `www.example.com`, sauf
 
 L'objectif est de protéger les communications avec un serveur web, par un certificat, en respectant le plus possible les règles de l'art, mais dans un contexte précis :
 
-## certificat _wildcard_ SSL Standard, délivré par Gandi
+## Certificat _wildcard_ SSL Standard, délivré par Gandi
 
 Ce type de certificat coûte environ 120 €/an. Il permet de protéger avec un même certificat tous les sous-domaines (de premier niveau) d'un nom de domaine principal.
 
@@ -23,11 +23,15 @@ Vous pouvez aussi opter pour un certificat **SSL Pro** (_wildcard_ ou pas). Il c
 
 La procédure décrite ici concerne donc un certificat **SSL Standard**. Dans la plupart des cas elle est identique pour un **SSL Pro** mais je préciserai lorsque c'est différent.
 
-## niveau _intermédiaire_
+## Niveau _intermédiaire_
 
-Les configurations "type" proposées par Mozilla dans [Server-Side TLS][server-side-tls] sont : **old**, **intermediate** et **modern**.
+Dans [Server-Side TLS][server-side-tls], Mozilla propose 3 niveaux de configuration. Pour chacun, voici les plus anciens clients compatibles, par niveau :
 
-Actuellement, seuls peu de services web peuvent se permettre d'être en **modern**. Nous n'avons pas une base d'utilisateurs technologiquement dépassés non plus, donc nous allons choisir **intermediate**.
+- **modern** : Firefox 27, Chrome 22, IE 11, Opera 14, Safari 7, Android 4.4, Java 8
+- **intermediate** : Firefox 1, Chrome 1, IE 7, Opera 5, Safari 1, Windows XP IE8, Android 2.3, Java 7
+- **old** :	Windows XP IE6, Java 6
+
+Nous allons opter pour une configuration **intermediate**, qui nous permet d'avoir un **bon compromis compatibilité/sécurité**.
 
 ### SHA-2
 

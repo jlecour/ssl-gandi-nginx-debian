@@ -70,71 +70,79 @@ Il faut commencer par générer une clé privée (`*.key.pem`) et une demande de
 
     → openssl req -nodes -newkey rsa:2048 -sha256 -keyout wildcard_example_com.key.pem -out wildcard_example_com.csr.pem
 
-    Country Name (2 letter code) [AU]:FR
-    State or Province Name (full name) [Some-State]:
-    Locality Name (eg, city) []:Marseille
-    Organization Name (eg, company) [Internet Widgits Pty Ltd]:Example Inc.
-    Organizational Unit Name (eg, section) []:
-    Common Name (e.g. server FQDN or YOUR name) []:*.example.com
-    Email Address []:contact@example.com
+````
+Country Name (2 letter code) [AU]:FR
+State or Province Name (full name) [Some-State]:
+Locality Name (eg, city) []:Marseille
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:Example Inc.
+Organizational Unit Name (eg, section) []:
+Common Name (e.g. server FQDN or YOUR name) []:*.example.com
+Email Address []:contact@example.com
 
-    Please enter the following 'extra' attributes
-    to be sent with your certificate request
-    A challenge password []:
-    An optional company name []:
+Please enter the following 'extra' attributes
+to be sent with your certificate request
+A challenge password []:
+An optional company name []:
+````
 
 Le contenu du CSR devra être transmis à Gandi.
 
     → cat wildcard_example_com.csr.pem
-    -----BEGIN CERTIFICATE REQUEST-----
-    MIICzzCCAbcCAQAwgYkxCzAJBgNVBAYTAkZSMRMwEQYDVQQIEwpTb21lLVN0YXRl
-    MRIwEAYDVQQHEwlNYXJzZWlsbGUxFTATBgNVBAoTDEV4YW1wbGUgSW5jLjEWMBQG
-    A1UEAxQNKi5leGFtcGxlLmNvbTEiMCAGCSqGSIb3DQEJARYTY29udGFjdEBleGFt
-    cGxlLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKO13wEpS2Ka
-    unLpJVLF2AqYVZV4OK7p7OG4IfVhkK5wP/kh8KYxyOHZZDx+rGfJE1UA8dJQd+EV
-    xST0tdN2tw0Dv0jSv6SjXoQO1inTbDf+qixxAj/RxAVmn8AuWC3g/YtI7Wikb3PO
-    +h81Ezb7i4rkZGYoFleDOpprQvxZEKVXOyU9bumKJRY3YO7xmwdV1pVt+vwgyR+8
-    sI1R7OCglPwdYlRD9R0ZFEzpPYkDmY7qkx9Jk+TJNewSyS4wy6qg6Neguxg+hYaD
-    MLY5kXmhmRBHlTaOznbi8m/lEIszH9/r+4weDjt66DPEmM0vUEl3p8dZUb2Nkn7n
-    gBOCM4/mdhcCAwEAAaAAMA0GCSqGSIb3DQEBCwUAA4IBAQAri8Gtz2SkiBMXb4Me
-    ICL/exVrM6q03wcrFSOE9XJbcyOOA1gP8+zWNcNlMyfd/MpB5lNRPdzKT01zb17z
-    kiteEDTSvGMTwklWJN08hJDXPXs2POnQDZau/FEAvLM8jWheq+UzSsIsuSju1MUJ
-    ra8d/3FH25J5eRCvy63tPpje9qk+EoHxO5g22QCcgXIc2CANicLNjTKkECG+TRN1
-    WMmir+a2+raBgNZCrE5N87SsfHnhPZEJExXL5AuKTAOH3FcBb0G1f4KcKPgULbrE
-    aH9rpFywuEMgnkp3eRoxtPs7UuTVTaNIjCJX+Q5oY2eT6cH1UVwn8qnJe1j8S6Mx
-    CGi7
-    -----END CERTIFICATE REQUEST-----
+
+````
+-----BEGIN CERTIFICATE REQUEST-----
+MIICzzCCAbcCAQAwgYkxCzAJBgNVBAYTAkZSMRMwEQYDVQQIEwpTb21lLVN0YXRl
+MRIwEAYDVQQHEwlNYXJzZWlsbGUxFTATBgNVBAoTDEV4YW1wbGUgSW5jLjEWMBQG
+A1UEAxQNKi5leGFtcGxlLmNvbTEiMCAGCSqGSIb3DQEJARYTY29udGFjdEBleGFt
+cGxlLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKO13wEpS2Ka
+unLpJVLF2AqYVZV4OK7p7OG4IfVhkK5wP/kh8KYxyOHZZDx+rGfJE1UA8dJQd+EV
+xST0tdN2tw0Dv0jSv6SjXoQO1inTbDf+qixxAj/RxAVmn8AuWC3g/YtI7Wikb3PO
++h81Ezb7i4rkZGYoFleDOpprQvxZEKVXOyU9bumKJRY3YO7xmwdV1pVt+vwgyR+8
+sI1R7OCglPwdYlRD9R0ZFEzpPYkDmY7qkx9Jk+TJNewSyS4wy6qg6Neguxg+hYaD
+MLY5kXmhmRBHlTaOznbi8m/lEIszH9/r+4weDjt66DPEmM0vUEl3p8dZUb2Nkn7n
+gBOCM4/mdhcCAwEAAaAAMA0GCSqGSIb3DQEBCwUAA4IBAQAri8Gtz2SkiBMXb4Me
+ICL/exVrM6q03wcrFSOE9XJbcyOOA1gP8+zWNcNlMyfd/MpB5lNRPdzKT01zb17z
+kiteEDTSvGMTwklWJN08hJDXPXs2POnQDZau/FEAvLM8jWheq+UzSsIsuSju1MUJ
+ra8d/3FH25J5eRCvy63tPpje9qk+EoHxO5g22QCcgXIc2CANicLNjTKkECG+TRN1
+WMmir+a2+raBgNZCrE5N87SsfHnhPZEJExXL5AuKTAOH3FcBb0G1f4KcKPgULbrE
+aH9rpFywuEMgnkp3eRoxtPs7UuTVTaNIjCJX+Q5oY2eT6cH1UVwn8qnJe1j8S6Mx
+CGi7
+-----END CERTIFICATE REQUEST-----
+````
 
 La clé privée ne doit être **communiquée à personne** et être stockée de manière **sécurisée** sur votre serveur. Ici, il s'agit d'un certificat factice donc il n'y a aucun risque à la dévoiler, ça aidera les étapes ultérieures.
 
     → cat wildcard_example_com.key.pem
-    -----BEGIN RSA PRIVATE KEY-----
-    MIIEpAIBAAKCAQEAo7XfASlLYpq6cuklUsXYCphVlXg4runs4bgh9WGQrnA/+SHw
-    pjHI4dlkPH6sZ8kTVQDx0lB34RXFJPS103a3DQO/SNK/pKNehA7WKdNsN/6qLHEC
-    P9HEBWafwC5YLeD9i0jtaKRvc876HzUTNvuLiuRkZigWV4M6mmtC/FkQpVc7JT1u
-    6YolFjdg7vGbB1XWlW36/CDJH7ywjVHs4KCU/B1iVEP1HRkUTOk9iQOZjuqTH0mT
-    5Mk17BLJLjDLqqDo16C7GD6FhoMwtjmReaGZEEeVNo7OduLyb+UQizMf3+v7jB4O
-    O3roM8SYzS9QSXenx1lRvY2SfueAE4Izj+Z2FwIDAQABAoIBAQCO7LlEykiGTY95
-    wxJSsWdr2JLfa5YRHykv5xG+qO8nW9h+KKNwdQZsJt7b8buS4HmAPNLiSl5epCL5
-    oKsdcwdc1Wiqq1Ok6PwbTtiqq2pPeIYZRpAwJ3J7RJ0zq0JQy5yPfZvHP8gN0yWL
-    GUstNW8eU0dT6KuYu3juV7ajmR5vOdNeGcxftA/gN0SQGlSuK14K2pyZAirBejNc
-    RozPtC4tF6XLgrUUcmYlw2q5Uji5jJah8LZQEf6rFi36y43iteYE+7bz/gnBZ7tP
-    7y7SozkvtZ8tVUl8I0LtNz3KOv/ukTasNFBIQpWK5auU2n4BMw047nSPP4nWL5+J
-    TOaGu0ABAoGBANE5obJtNtNh+zgNv9qKAjHAvBgg+T43bZoqgQJzXsoKveezQ6K7
-    x+4yZ7nie2WoKoRO2w3Gsa0JHqoslK6bg3MVaabU1miLR73UFkHPW5qkMzSb9ndN
-    P/v/LWO1glbHMqO9kewdJoJEjFwUoWVdEKQvUW5ZoLya3wHU8Ab1vTtBAoGBAMhP
-    V/eA57lF9Pq+aEfljyaXvASzgAJM8KQHyG16I3LiK5CFVIHPrDvCH4HybeuwCG7S
-    HfM29678DzZpTHfplfnKXlPoG/QJCsiKUtn3OMTHyiUsHT/j2juqA6cZ3/0G5LO8
-    4zNQpLrrzgrrf4P/p6pXVZKmIERTdDVBhaWkUZNXAoGACzzNMogrKa9ZjukuJM7E
-    z2dKswESYgUYHe+qfjc0ICXzjT5To6nyUxjh+VnwxsUBg5m4qkTBxkl3HCzIz5gK
-    t2OvCQblfTf94nRBvcclZGjtVyYJVt8PULmj9ncJSR/p2GGWNNhb+SM1Zry07nzR
-    KABin0qxF3A6Ch8lxTntsAECgYEAvVWR9lYXsZ4YUzHK67pmNrpRc7gfFQ2Yn9Lj
-    deduvlZdizsbh5++UrXIhlGZ6J75OZbNzGh2cSW7U1jweJ+HrRXFV1Ybpe0uDiQA
-    8BmnxQh7X+t0skEytBadYUMp3sa3QdUWhBiDvFLK7LNwUlpCJtZqAjWYZjzjqLsI
-    Emtg1/0CgYA214z3XCLXqenPDcJuYHoKaDNY7hBJpcMx+PC/djHa5lbFCYzfhg7h
-    A+sH/qFmLTkb3Ha+S4uRTWlEfMk7iliwAGfGhYBTCjUQiqdLdwSkO6YBey0nXZLJ
-    E0pV7+shRPoK7jguy6zzSHK1ygWnqTSn8TePgtIXOoVcZoH6jQBfcA==
-    -----END RSA PRIVATE KEY-----
+
+````
+-----BEGIN RSA PRIVATE KEY-----
+MIIEpAIBAAKCAQEAo7XfASlLYpq6cuklUsXYCphVlXg4runs4bgh9WGQrnA/+SHw
+pjHI4dlkPH6sZ8kTVQDx0lB34RXFJPS103a3DQO/SNK/pKNehA7WKdNsN/6qLHEC
+P9HEBWafwC5YLeD9i0jtaKRvc876HzUTNvuLiuRkZigWV4M6mmtC/FkQpVc7JT1u
+6YolFjdg7vGbB1XWlW36/CDJH7ywjVHs4KCU/B1iVEP1HRkUTOk9iQOZjuqTH0mT
+5Mk17BLJLjDLqqDo16C7GD6FhoMwtjmReaGZEEeVNo7OduLyb+UQizMf3+v7jB4O
+O3roM8SYzS9QSXenx1lRvY2SfueAE4Izj+Z2FwIDAQABAoIBAQCO7LlEykiGTY95
+wxJSsWdr2JLfa5YRHykv5xG+qO8nW9h+KKNwdQZsJt7b8buS4HmAPNLiSl5epCL5
+oKsdcwdc1Wiqq1Ok6PwbTtiqq2pPeIYZRpAwJ3J7RJ0zq0JQy5yPfZvHP8gN0yWL
+GUstNW8eU0dT6KuYu3juV7ajmR5vOdNeGcxftA/gN0SQGlSuK14K2pyZAirBejNc
+RozPtC4tF6XLgrUUcmYlw2q5Uji5jJah8LZQEf6rFi36y43iteYE+7bz/gnBZ7tP
+7y7SozkvtZ8tVUl8I0LtNz3KOv/ukTasNFBIQpWK5auU2n4BMw047nSPP4nWL5+J
+TOaGu0ABAoGBANE5obJtNtNh+zgNv9qKAjHAvBgg+T43bZoqgQJzXsoKveezQ6K7
+x+4yZ7nie2WoKoRO2w3Gsa0JHqoslK6bg3MVaabU1miLR73UFkHPW5qkMzSb9ndN
+P/v/LWO1glbHMqO9kewdJoJEjFwUoWVdEKQvUW5ZoLya3wHU8Ab1vTtBAoGBAMhP
+V/eA57lF9Pq+aEfljyaXvASzgAJM8KQHyG16I3LiK5CFVIHPrDvCH4HybeuwCG7S
+HfM29678DzZpTHfplfnKXlPoG/QJCsiKUtn3OMTHyiUsHT/j2juqA6cZ3/0G5LO8
+4zNQpLrrzgrrf4P/p6pXVZKmIERTdDVBhaWkUZNXAoGACzzNMogrKa9ZjukuJM7E
+z2dKswESYgUYHe+qfjc0ICXzjT5To6nyUxjh+VnwxsUBg5m4qkTBxkl3HCzIz5gK
+t2OvCQblfTf94nRBvcclZGjtVyYJVt8PULmj9ncJSR/p2GGWNNhb+SM1Zry07nzR
+KABin0qxF3A6Ch8lxTntsAECgYEAvVWR9lYXsZ4YUzHK67pmNrpRc7gfFQ2Yn9Lj
+deduvlZdizsbh5++UrXIhlGZ6J75OZbNzGh2cSW7U1jweJ+HrRXFV1Ybpe0uDiQA
+8BmnxQh7X+t0skEytBadYUMp3sa3QdUWhBiDvFLK7LNwUlpCJtZqAjWYZjzjqLsI
+Emtg1/0CgYA214z3XCLXqenPDcJuYHoKaDNY7hBJpcMx+PC/djHa5lbFCYzfhg7h
+A+sH/qFmLTkb3Ha+S4uRTWlEfMk7iliwAGfGhYBTCjUQiqdLdwSkO6YBey0nXZLJ
+E0pV7+shRPoK7jguy6zzSHK1ygWnqTSn8TePgtIXOoVcZoH6jQBfcA==
+-----END RSA PRIVATE KEY-----
+````
 
 Gandi propose une vérification par enregistrement DNS, par fichier texte ou par envoi d'un e-mail.
 Chacune a bien sûr ses avantages et inconvénients.
@@ -168,14 +176,16 @@ La génération des paramètres DH peut prendre plusieurs minutes.
 
 Ça donne un fichier de ce genre :
 
-    -----BEGIN DH PARAMETERS-----
-    MZ9wdNIzSPihtIKQLMBF1GS6UJKjIQznU06XeY0d5u4LanYngWCTFPaa3MqN9h/Z
-    ThWGYMx7Aa6I82Tao0my2ee6jvOC5yc9dSEW51cjHdhjASzhtUEoIXLGTasfp2QF
-    ZA85bq8/iU/n8qGYvSk5ieP1xhOI07YxaReER/0wmG9rHIBrnYn2j5nYSxfcPfsQ
-    oqzyJPg+dp7vifJAWxj/2jkzbUK9Ij3hHiFitdNCmqRqCpIjrU6Zq+ZenRz9T3KE
-    QZK68V0RM3hBt6CVQ80vfhYmT+3f54gNB9jfeHCwqLCYotWdmO7Q03FR+mgA4Zhg
-    A/q9Cm/STK80ZQkdnfdm7qnJFG/+vJ7LTdIN4L1vMxkaMg2c5q63FQpdPCAQI=
-    -----END DH PARAMETERS-----
+````
+-----BEGIN DH PARAMETERS-----
+MZ9wdNIzSPihtIKQLMBF1GS6UJKjIQznU06XeY0d5u4LanYngWCTFPaa3MqN9h/Z
+ThWGYMx7Aa6I82Tao0my2ee6jvOC5yc9dSEW51cjHdhjASzhtUEoIXLGTasfp2QF
+ZA85bq8/iU/n8qGYvSk5ieP1xhOI07YxaReER/0wmG9rHIBrnYn2j5nYSxfcPfsQ
+oqzyJPg+dp7vifJAWxj/2jkzbUK9Ij3hHiFitdNCmqRqCpIjrU6Zq+ZenRz9T3KE
+QZK68V0RM3hBt6CVQ80vfhYmT+3f54gNB9jfeHCwqLCYotWdmO7Q03FR+mgA4Zhg
+A/q9Cm/STK80ZQkdnfdm7qnJFG/+vJ7LTdIN4L1vMxkaMg2c5q63FQpdPCAQI=
+-----END DH PARAMETERS-----
+````
 
 Pour faciliter l'utilisation de plusieurs niveau de complexité selon les installations (ou les essais), nous avons écrit le fichier avec un suffix explicite puis créé un lien symbolique.
 
@@ -283,69 +293,78 @@ Par habitude on extrait souvent les blocs spécifiques aux sites et applications
 Voici un exemple typique de configuration
 
     → cat /etc/nginx/nginx.conf
-    user www-data;
-    worker_processes 32;
-    pid /var/run/nginx.pid;
 
-    events {
-      worker_connections 768;
-    }
+````nginx
+user www-data;
+worker_processes 32;
+pid /var/run/nginx.pid;
 
-    http {
-      sendfile on;
-      tcp_nopush on;
-      tcp_nodelay on;
-      keepalive_timeout 65;
+events {
+  worker_connections 768;
+}
 
-      include /etc/nginx/mime.types;
-      default_type application/octet-stream;
+http {
+  sendfile on;
+  tcp_nopush on;
+  tcp_nodelay on;
+  keepalive_timeout 65;
 
-      access_log /var/log/nginx/access.log;
-      error_log /var/log/nginx/error.log;
+  include /etc/nginx/mime.types;
+  default_type application/octet-stream;
 
-      include /etc/nginx/sites-enabled/*;
-    }
+  access_log /var/log/nginx/access.log;
+  error_log /var/log/nginx/error.log;
+
+  include /etc/nginx/sites-enabled/*;
+}
+````
 
 Ici on voit que tous les fichiers présents dans `/etc/nginx/sites-enabled` sont automatiquement inclus.
 
 Nous allons placer notre configuration pour le site `www.example.com` dans `/etc/nginx/sites-enabled/www_example_com.conf`
 
     → cat /etc/nginx/sites-enabled/www_example_com.conf
-    server {
-      listen 80;
-      rewrite ^ https://$host$request_uri? permanent;
-    }
-    server {
-      listen 443 ssl;
-  
-      server_name www.example.com;
-  
-      include /etc/nginx/wildcard_example_com.conf;
-  
-      root /var/www/example;
-      index index.htm index.html;
-    }
+
+````nginx
+server {
+  listen 80;
+  rewrite ^ https://$host$request_uri? permanent;
+}
+server {
+  listen 443 ssl;
+
+  server_name www.example.com;
+
+  include /etc/nginx/wildcard_example_com.conf;
+
+  root /var/www/example;
+  index index.htm index.html;
+}
+````
 
 Comme nous mettons en place un certificat SSL _wildcard_ pour le domaine, il est probable que nous réutilisions la partie SSL pour plusieurs configurations de sites. Nous la placerons alors dans `/etc/nginx/wildcard_example_com.conf`
 
     → cat /etc/nginx/wildcard_example_com.conf
-    ssl_certificate /etc/ssl/certs/wildcard_example_com.crt.pem;
-    ssl_certificate_key /etc/ssl/private/wildcard_example_com.key.pem;
-    
-    ssl_session_timeout 5m;
-    ssl_session_cache shared:SSL:50m;
-    
-    ssl_dhparam /etc/ssl/dhparam.pem;
-    
-    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
-    ssl_ciphers 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA';
-    ssl_prefer_server_ciphers on;
-    
-    ssl_stapling on;
-    ssl_stapling_verify on;
-    ssl_trusted_certificate /etc/ssl/gandi-standardssl-2.chain.pem;
-    
-    resolver 127.0.0.1;
+
+````nginx
+ssl_certificate /etc/ssl/certs/wildcard_example_com.crt.pem;
+ssl_certificate_key /etc/ssl/private/wildcard_example_com.key.pem;
+
+ssl_session_timeout 5m;
+ssl_session_cache shared:SSL:50m;
+
+ssl_dhparam /etc/ssl/dhparam.pem;
+
+ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+ssl_ciphers 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA';
+ssl_prefer_server_ciphers on;
+
+ssl_stapling on;
+ssl_stapling_verify on;
+ssl_trusted_certificate /etc/ssl/gandi-standardssl-2.chain.pem;
+
+resolver 127.0.0.1;
+````
 
 Les 2 premières lignes concernent les fichiers servant à chiffrer la connexion : le certificat et la clé privée.
 
@@ -399,38 +418,41 @@ Il s'agit de quelques outils, écrits par [Julien Véhent][jvehent], pour analys
 `cipherscan` est un script qui vous indique quelle est la configuration du certificat
 
     → ./cipherscan www.example.com
-    ........................
-    Target: www.example.com:443
 
-    prio  ciphersuite                  protocols              pfs_keysize
-    1     ECDHE-RSA-AES128-GCM-SHA256  TLSv1.2                ECDH,P-256,256bits
-    2     ECDHE-RSA-AES256-GCM-SHA384  TLSv1.2                ECDH,P-256,256bits
-    3     DHE-RSA-AES128-GCM-SHA256    TLSv1.2                DH,4096bits
-    4     DHE-RSA-AES256-GCM-SHA384    TLSv1.2                DH,4096bits
-    5     ECDHE-RSA-AES128-SHA256      TLSv1.2                ECDH,P-256,256bits
-    6     ECDHE-RSA-AES128-SHA         TLSv1,TLSv1.1,TLSv1.2  ECDH,P-256,256bits
-    7     ECDHE-RSA-AES256-SHA384      TLSv1.2                ECDH,P-256,256bits
-    8     ECDHE-RSA-AES256-SHA         TLSv1,TLSv1.1,TLSv1.2  ECDH,P-256,256bits
-    9     DHE-RSA-AES128-SHA256        TLSv1.2                DH,4096bits
-    10    DHE-RSA-AES128-SHA           TLSv1,TLSv1.1,TLSv1.2  DH,4096bits
-    11    DHE-RSA-AES256-SHA256        TLSv1.2                DH,4096bits
-    12    DHE-RSA-AES256-SHA           TLSv1,TLSv1.1,TLSv1.2  DH,4096bits
-    13    AES128-GCM-SHA256            TLSv1.2
-    14    AES256-GCM-SHA384            TLSv1.2
-    15    AES128-SHA256                TLSv1.2
-    16    AES256-SHA256                TLSv1.2
-    17    AES128-SHA                   TLSv1,TLSv1.1,TLSv1.2
-    18    AES256-SHA                   TLSv1,TLSv1.1,TLSv1.2
-    19    DHE-RSA-CAMELLIA256-SHA      TLSv1,TLSv1.1,TLSv1.2  DH,4096bits
-    20    CAMELLIA256-SHA              TLSv1,TLSv1.1,TLSv1.2
-    21    DHE-RSA-CAMELLIA128-SHA      TLSv1,TLSv1.1,TLSv1.2  DH,4096bits
-    22    CAMELLIA128-SHA              TLSv1,TLSv1.1,TLSv1.2
-    23    DES-CBC3-SHA                 TLSv1,TLSv1.1,TLSv1.2
+````
+........................
+Target: www.example.com:443
 
-    Certificate: trusted, 2048 bit, sha256WithRSAEncryption signature
-    TLS ticket lifetime hint: 300
-    OCSP stapling: supported
-    Server side cipher ordering
+prio  ciphersuite                  protocols              pfs_keysize
+1     ECDHE-RSA-AES128-GCM-SHA256  TLSv1.2                ECDH,P-256,256bits
+2     ECDHE-RSA-AES256-GCM-SHA384  TLSv1.2                ECDH,P-256,256bits
+3     DHE-RSA-AES128-GCM-SHA256    TLSv1.2                DH,4096bits
+4     DHE-RSA-AES256-GCM-SHA384    TLSv1.2                DH,4096bits
+5     ECDHE-RSA-AES128-SHA256      TLSv1.2                ECDH,P-256,256bits
+6     ECDHE-RSA-AES128-SHA         TLSv1,TLSv1.1,TLSv1.2  ECDH,P-256,256bits
+7     ECDHE-RSA-AES256-SHA384      TLSv1.2                ECDH,P-256,256bits
+8     ECDHE-RSA-AES256-SHA         TLSv1,TLSv1.1,TLSv1.2  ECDH,P-256,256bits
+9     DHE-RSA-AES128-SHA256        TLSv1.2                DH,4096bits
+10    DHE-RSA-AES128-SHA           TLSv1,TLSv1.1,TLSv1.2  DH,4096bits
+11    DHE-RSA-AES256-SHA256        TLSv1.2                DH,4096bits
+12    DHE-RSA-AES256-SHA           TLSv1,TLSv1.1,TLSv1.2  DH,4096bits
+13    AES128-GCM-SHA256            TLSv1.2
+14    AES256-GCM-SHA384            TLSv1.2
+15    AES128-SHA256                TLSv1.2
+16    AES256-SHA256                TLSv1.2
+17    AES128-SHA                   TLSv1,TLSv1.1,TLSv1.2
+18    AES256-SHA                   TLSv1,TLSv1.1,TLSv1.2
+19    DHE-RSA-CAMELLIA256-SHA      TLSv1,TLSv1.1,TLSv1.2  DH,4096bits
+20    CAMELLIA256-SHA              TLSv1,TLSv1.1,TLSv1.2
+21    DHE-RSA-CAMELLIA128-SHA      TLSv1,TLSv1.1,TLSv1.2  DH,4096bits
+22    CAMELLIA128-SHA              TLSv1,TLSv1.1,TLSv1.2
+23    DES-CBC3-SHA                 TLSv1,TLSv1.1,TLSv1.2
+
+Certificate: trusted, 2048 bit, sha256WithRSAEncryption signature
+TLS ticket lifetime hint: 300
+OCSP stapling: supported
+Server side cipher ordering
+````
 
 Il sait également exporter ses résultats au format JSON.
 
@@ -439,8 +461,11 @@ Il sait également exporter ses résultats au format JSON.
 `analyze.py` est un script qui vous indique si votre certificat respecte le niveau souhaité
 
     → ./analyze.py -l intermediate -t www.example.com
-    www.example.com:443 has intermediate ssl/tls
-    and complies with the 'intermediate' level
+
+````
+www.example.com:443 has intermediate ssl/tls
+and complies with the 'intermediate' level
+````
 
 Ce dernier peut être exécuté en _mode Nagios_ afin d'automatiser des tests régulier et émettre des alertes si la conformité était compromise.
 

@@ -148,31 +148,36 @@ Une fois la validation faite, vous pouvez récupérer votre certificat, à stock
 
 # 3. Configuration du serveur
 
-## Diffie-Hellman Key Exchange
+## Forward Secrecy
 
-Pour activer le mécanisme de **Perfect Forward Secrecy**, le serveur et le client doivent utiliser  un nombre premier et un générateur pour l'échange de clé Diffie-Hellman. On indiquera à Nginx dans quel fichier se trouvent ces paramètres, générés avec OpenSSL.
+Dans un mécanisme de chiffrement d'un échange à partir d'une clé privée, le problème est que si on met la main sur cette clé, tous les échanges passés et futurs deviennent lisibles. La révocation d'un certificat ne protège pas le déchiffrement de ce qui a été chiffré dans le passé. Dans une situation de surveillance des échanges, on peut tout intercepter/stocker et se dire qu'il sera peut-être possible de tout déchiffrer plus tard. Les agences de renseignement sont soupçonnées d'appliquer ce genre de stratégie.
 
-L'utilisation de 4096 bits est actuellement recommandée, mais il faut savoir que celà pose des soucis de compatibilité avec des anciens systèmes. Par exemple Java 6 ne supporte pas plus de 1024 bits.
+Le principe de **Forward Secrecy** est que le client et le serveur se mettent d'accord sur une clé temporaire de chiffrement. Cette clé restera accessible uniquement le temps de la session TLS. Si une de ces clés est récupérée ou découverte, seules les échanges de la session en question seront déchiffrables.
+
+Pour faire fonctionner ce mécanisme, le client et le serveur doivent procéder à un **échange de clé Diffie-Hellman**. Les serveur va communiquer au client un (très grand) nombre premier et un générateur. Cette transmission se fait en clair mais de manière signée (pour éviter un compromission de type [MITM][mitm]). Ces paramètres sont pré-générés et stockés sur le serveur, dans un fichier.
+
+OpenSSL fourni un outil pour générer ce fichier, avec des paramètres de complexité (en bits). La valeur la plus courante est **2048 bits**. De plus en plus, **4096 bits** sont recommandés. Mais les systèmes anciens (tels que Java 6 et IE6) ne supportent pas plus de **1024 bits**.
+
+Au niveau **intermediate** il vaut mieux utiliser (au moins) 2048 bits, même si 1024 bits sont acceptables. Dans nos cas, nous utiliserons 2048 bits, car même le niveau **modern** n'impose pas 4096 bits.
 
 La génération des paramètres DH peut prendre plusieurs minutes.
 
-    → openssl dhparam -rand – 4096 -out /etc/ssl/dhparam.pem
-    
-Ça donnera un fichier de ce genre :
+    → cd /etc/ssl/ \
+    && openssl dhparam -rand – 2048 -out dhparam-2048.pem \
+    && ln -s dhparam-2048.pem dhparam.pem
+
+Ça donne un fichier de ce genre :
 
     -----BEGIN DH PARAMETERS-----
     MZ9wdNIzSPihtIKQLMBF1GS6UJKjIQznU06XeY0d5u4LanYngWCTFPaa3MqN9h/Z
     ThWGYMx7Aa6I82Tao0my2ee6jvOC5yc9dSEW51cjHdhjASzhtUEoIXLGTasfp2QF
     ZA85bq8/iU/n8qGYvSk5ieP1xhOI07YxaReER/0wmG9rHIBrnYn2j5nYSxfcPfsQ
     oqzyJPg+dp7vifJAWxj/2jkzbUK9Ij3hHiFitdNCmqRqCpIjrU6Zq+ZenRz9T3KE
-    8PhK6yAqCQriNWFcWJ9lubNC792n7qbTFrUw/xT732AK5BD2BuliSlo6Oy6La0zQ
     QZK68V0RM3hBt6CVQ80vfhYmT+3f54gNB9jfeHCwqLCYotWdmO7Q03FR+mgA4Zhg
-    Cb1aqQMsqmIbUEWArsZqkCQ0qC4EiGLGMtYE4Cawiss6I8im2g0oHCC9CF/N7A/Y
-    YE8LxxdYP39RpnYEYEpd08nnIw8cML08vhuu++duXdhsOQMnMOENi2B8g4NtGKSr
-    lJ4WezMYNUM9hffYnVDIE+pXoL+snC9ye6xr3yMg6ym3aVrsofAanKIEkYNNsPf1
-    RXeXw8u33gtWvnqnnNrwfk0Q5H2gaAqOCntIrbE68Zn5+WGKWfW3w1mP/U+TRExx
     A/q9Cm/STK80ZQkdnfdm7qnJFG/+vJ7LTdIN4L1vMxkaMg2c5q63FQpdPCAQI=
     -----END DH PARAMETERS-----
+
+Pour faciliter l'utilisation de plusieurs niveau de complexité selon les installations (ou les essais), nous avons écrit le fichier avec un suffix explicite puis créé un lien symbolique.
 
 ## Hiérarchie des certificats
 
@@ -471,6 +476,7 @@ Julien est OpSec chez Mozilla. Il est l'auteur de [Server-Side TLS][server-side-
 
 Un outil d'aide à la configuration de Apache/Nginx/HAProxy, basé sur les recommandations de [Server-Side TLS][server-side-tls].
 
+[mitm]: http://fr.wikipedia.org/wiki/Attaque_de_l%27homme_du_milieu "Man In The Middle"
 [jeveuxhttps]: https://www.jeveuxhttps.fr/ "Je Veux HTTPS"
 [jvehent]: http://jve.linuxwall.info/ "Julien Véhent"
 [how2ssl]: http://how2ssl.com "How 2 SSL"

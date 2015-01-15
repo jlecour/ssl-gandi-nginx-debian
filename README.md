@@ -177,10 +177,10 @@ Généralement, ce sont des certificats intermédiaires, servant eux-aussi à fa
 
 Dans notre cas, nous avons :
 
-0. la racine `AddTrust External Root`
-1. la branche `USERTrust RSA AddTrust CA`
-2. la branche `Gandi Standard SSL CA2`
-3. la feuille `*.example.com`
+- la racine (0) `AddTrust External Root`
+- la branche (1) `USERTrust RSA AddTrust CA`
+- la branche (2) `Gandi Standard SSL CA2`
+- la feuille (3) `*.example.com`
 
 Notez bien cet ordre car il nous servira pour les 2 fichiers de chaîne.
 

@@ -374,6 +374,10 @@ Les 2 premières lignes concernent les fichiers servant à chiffrer la connexion
 
 `ssl_protocols` est la liste des protocoles acceptés par le serveur. À ce jour, seuls les versions `TLSv1`, `TLSv1.1` et `TLSv1.2` de TLS sont acceptables. Plus d'info sur l'[historique de SSL/TLS](http://fr.wikipedia.org/wiki/Transport_Layer_Security#Historique) sur Wikipedia. Les failles récentes de `SSLv3` nous on poussé à le retirer autant que possible des listes de protocoles utilisés.
 
+`ssl_ciphers` est la liste ordonnée des ciphers (algorithmes de chiffrement) qui sont acceptés.
+
+`ssl_prefer_server_ciphers` indique que la liste et l'ordre du serveur priment sur ceux indiqués par le client.
+
 `ssl_stapling` et `ssl_stapling_verify` permettent d'activer la fonction de **OCSP stapling**, expliquée plus loin. `ssl_trusted_certificate` indique à Nginx où trouver le fichier de la chaîne de certificats (généré plus haut).
 
 Enfin, `resolver` indique l'adresse qu'il faut interroger pour les résolutions de nom servant à la vérification de validité des certificats parents, via le protocole `OCSP`.

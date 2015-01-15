@@ -41,7 +41,7 @@ Pour les certificats SHA-2, certains navigateurs n'ont pas encore ajoutés les c
 
 Si votre site ne doit être consultable qu'en HTTPS, cet en-tête HTTP permettra de s'assurer que les navigateurs refuseront toute connexion non chiffrée sur votre domaine. La valeur conseillée est d'au moins 180 jours, mais c'est souvent 365 jours que l'on rencontre dans la configuration.
 
-Ça n'est pas non plus obligatoire pour la configuration **intermediate** mais nous allons l'appliquer quand même.
+Il est possible d'être conforme à la configuration **intermediate** sans appliquer HSTS, mais si vous pouvez vous permettre de n'autoriser que des échanges chiffrés, je vous le recommande.
 
 ## Nginx
 

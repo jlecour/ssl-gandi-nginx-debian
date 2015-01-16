@@ -68,7 +68,7 @@ Les outils fournis par OpenSSL facilitent la conversion d'un format à l'autre.
 
 Il faut commencer par générer une clé privée (`*.key.pem`) et une demande de certificat (`*.csr.pem`).
 
-    → openssl req -nodes -newkey rsa:2048 -sha256 -keyout wildcard_example_com.key.pem -out wildcard_example_com.csr.pem
+    → openssl req -nodes -newkey rsa:2048 -sha256 -keyout /etc/ssl/private/wildcard_example_com.key.pem -out wildcard_example_com.csr.pem
 
 ````
 Country Name (2 letter code) [AU]:FR
@@ -280,7 +280,10 @@ C'est la clé privée du certificat. Ce fichier est indispensable.
 
 ### droits d'accès
 
-La clé privée doit n'être accessible qu'aux administrateurs et au processus du serveur web.
+La clé privée doit être accessible uniquement en lecture et par le seul compte root. Il est recommandé de créer la clef privée directement dans un dossier accessible uniquement par root (par exemple: /etc/ssl/private).
+
+chmod 400 /etc/ssl/private/wildcard_example_com.key.pem
+
 
 Les fichiers dans `/etc/ssl/certs` peuvent être accessible en lecture à tout le monde, mais seulement aux administrateurs pour l'écriture.
 

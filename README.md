@@ -513,6 +513,14 @@ Julien est OpSec chez Mozilla. Il est l'auteur de [Server-Side TLS][server-side-
 
 Un outil d'aide à la configuration de Apache/Nginx/HAProxy, basé sur les recommandations de [Server-Side TLS][server-side-tls].
 
+# Contributions
+
+Merci à ceux qui m'ont relu, conseillé, proposé des corrections et clarifications.
+
+- [Jef Mathiot](https://github.com/jefmathiot)
+- [Jérôme Pinguet](https://github.com/jeromecc)
+- [Benoît.S](https://twitter.com/benpro82)
+
 
 [mitm]: http://fr.wikipedia.org/wiki/Attaque_de_l%27homme_du_milieu "Man In The Middle"
 [jeveuxhttps]: https://www.jeveuxhttps.fr/ "Je Veux HTTPS"

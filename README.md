@@ -9,6 +9,9 @@ N'hésitez pas à utiliser tous les moyens nécessaires ([issue](https://github.
 Tous les fichiers sont présents dans l'arborescence partant de [/etc](etc) : config Nginx, fichiers de certificat, …
 Ils correspondent à un vrai certificat, pour le domaine `www.example.com`, sauf que Gandi ne l'a jamais réellement généré et son contenu est bidon.
 
+La plupart des commandes décrites ici doit être exécutée par un utilisateur privilégié, comme **root**.
+Seules les commandes liées au vérification post-installation peuvent être exécutées avec un utilisateur normal.
+
 # 1. Objectif
 
 L'objectif est de protéger les communications avec un serveur web, par un certificat, en respectant le plus possible les règles de l'art, mais dans un contexte précis :
@@ -57,6 +60,7 @@ Le type de système importe peut (tant qu'il ressemble à un Linux/Unix). Nous u
 
 # 2. Création du certificat
 
+
 ## Formats de certificats
 
 Les certificats sont fréquemment stockés dans un de ces 2 formats : **DER** et **PEM**.
@@ -67,6 +71,7 @@ Les outils fournis par OpenSSL facilitent la conversion d'un format à l'autre.
 ## Demande d'émission d'un certificat
 
 Il faut commencer par générer une clé privée (`*.key.pem`) et une demande de certificat (`*.csr.pem`).
+Pour éviter de faire transiter la clé privée dans un dossier non protégé, on la génère directement dans le dossier final (`/etc/ssl/private`) qui doit avoir les droits `drwx--x---` et appartenir à `root:ssl-cert`.
 
     → openssl req -nodes -newkey rsa:2048 -sha256 -keyout /etc/ssl/private/wildcard_example_com.key.pem -out wildcard_example_com.csr.pem
 
@@ -282,8 +287,8 @@ C'est la clé privée du certificat. Ce fichier est indispensable.
 
 La clé privée doit être accessible uniquement en lecture et par le seul compte root. Il est recommandé de créer la clef privée directement dans un dossier accessible uniquement par root (par exemple: /etc/ssl/private).
 
-chmod 400 /etc/ssl/private/wildcard_example_com.key.pem
-
+    → chmod 640 /etc/ssl/private/wildcard_example_com.key.pem
+    → chown root:ssl-cert /etc/ssl/private/wildcard_example_com.key.pem
 
 Les fichiers dans `/etc/ssl/certs` peuvent être accessible en lecture à tout le monde, mais seulement aux administrateurs pour l'écriture.
 
@@ -507,6 +512,7 @@ Julien est OpSec chez Mozilla. Il est l'auteur de [Server-Side TLS][server-side-
 ## [SSL config generator][ssl-config-generator] (en anglais)
 
 Un outil d'aide à la configuration de Apache/Nginx/HAProxy, basé sur les recommandations de [Server-Side TLS][server-side-tls].
+
 
 [mitm]: http://fr.wikipedia.org/wiki/Attaque_de_l%27homme_du_milieu "Man In The Middle"
 [jeveuxhttps]: https://www.jeveuxhttps.fr/ "Je Veux HTTPS"

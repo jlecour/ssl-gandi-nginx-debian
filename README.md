@@ -14,7 +14,7 @@ Seules les commandes liées au vérification post-installation peuvent être ex�
 
 # 1. Objectif
 
-L'objectif est de protéger les communications avec un serveur web, par un certificat, en respectant le plus possible les règles de l'art, mais dans un contexte précis :
+L'objectif est de protéger les communications entre un serveur web et ses clients en SSL et en respectant le plus possible les règles de l'art, mais dans un contexte précis, celui de certificats _wildcard_ délivrés par Gandi.
 
 ## Certificat _wildcard_ SSL Standard, délivré par Gandi
 
@@ -22,13 +22,13 @@ Ce type de certificat coûte environ 120 €/an. Il permet de protéger avec un 
 
 Il est délivré automatiquement et assez rapidement (moins d'1 heure).
 
-Vous pouvez aussi opter pour un certificat **SSL Pro** (_wildcard_ ou pas). Il coûtera plus cher, nécessitera une vérification de documents, mais vous apporte une garantie financière.
+Vous pouvez aussi opter pour un certificat **SSL Pro** (_wildcard_ ou pas). Il coûtera plus cher, nécessitera une vérification de documents, mais vous apportera une garantie financière.
 
-La procédure décrite ici concerne donc un certificat **SSL Standard**. Dans la plupart des cas elle est identique pour un **SSL Pro** mais je préciserai lorsque c'est différent.
+La procédure décrite ici concerne donc les certificats **SSL Standard** mais fonctionne avec les certificats **SSL Pro**.
 
-## Niveau _intermédiaire_
+## Niveau _intermediate_
 
-Dans [Server-Side TLS][server-side-tls], Mozilla propose 3 niveaux de configuration. Pour chacun, voici les plus anciens clients compatibles, par niveau :
+Dans son guide [Server-Side TLS][server-side-tls], Mozilla propose 3 niveaux de configuration. Pour chacun, voici les plus anciens clients compatibles, par niveau :
 
 - **modern** : Firefox 27, Chrome 22, IE 11, Opera 14, Safari 7, Android 4.4, Java 8
 - **intermediate** : Firefox 1, Chrome 1, IE 7, Opera 5, Safari 1, Windows XP IE8, Android 2.3, Java 7
@@ -38,21 +38,21 @@ Nous allons opter pour une configuration **intermediate**, qui nous permet d'avo
 
 ### SHA-2
 
-Au niveau **intermediate** nous avons le choix entre des certificats SHA-1 ou SHA-2 (256).
+Au niveau _intermediate_ nous avons le choix entre des certificats SHA-1 ou SHA-2 (256 bits).
 
-Nous allons choisir SHA-2 pour être plus "compatible" avec la tendance des navigateurs récents. [Google déprécie progressivement les certificats SHA-1](http://blog.chromium.org/2014/09/gradually-sunsetting-sha-1.html).
+Nous allons choisir SHA-2 pour être plus "compatible" avec la tendance des navigateurs récents. En effet, [Google déprécie progressivement les certificats SHA-1](http://blog.chromium.org/2014/09/gradually-sunsetting-sha-1.html).
 
-Pour les certificats SHA-2, certains navigateurs n'ont pas encore ajoutés les certificats racines. Il est donc prudent de les rajouter manuellement dans les chaînes. Le [Wiki de Gandi](http://wiki.gandi.net/fr/ssl/intermediate) apporte plus de précision à propos de la récupération des certificats intermédiaires.
+Pour les certificats SHA-2, certains navigateurs n'ont pas encore ajouté les certificats racines. Il est donc prudent de les rajouter manuellement dans les chaînes de certification. Le [Wiki de Gandi](http://wiki.gandi.net/fr/ssl/intermediate) apporte plus de précision sur la récupération des certificats intermédiaires.
 
-### HSTS: HTTP Strict Transport Security
+### HTTP Strict Transport Security
 
-Si votre site ne doit être consultable qu'en HTTPS, cet en-tête HTTP permettra de s'assurer que les navigateurs refuseront toute connexion non chiffrée sur votre domaine. La valeur conseillée est d'au moins 180 jours, mais c'est souvent 365 jours que l'on rencontre dans la configuration.
+Si votre site ne doit être consultable qu'en HTTPS, l'en-tête HTTP `Strict-Transport-Security` (HSTS) permettra de s'assurer que les navigateurs refuseront toute connexion non chiffrée sur votre domaine. La durée de vie de l'en-tête doit être assez longue : la valeur conseillée est de 180 jours, mais c'est souvent 365 jours que l'on rencontre dans la configuration.
 
-Il est possible d'être conforme à la configuration **intermediate** sans appliquer HSTS, mais si vous pouvez vous permettre de n'autoriser que des échanges chiffrés, je vous le recommande.
+Il est possible d'être conforme à la configuration _intermediate_ sans appliquer HSTS, mais si vous pouvez vous permettre de n'autoriser que des échanges chiffrés, je vous le recommande.
 
 ## Nginx
 
-Nginx est une excellente terminaison SSL/TLS, surtout à partir de la version 1.6. C'est le serveur web que nous utilisons déjà, donc nous aurons facilement accès aux meilleurs configurations possibles.
+Nginx est une excellente terminaison SSL/TLS, en particulier à partir de la version 1.6. C'est le serveur web que nous utilisons déjà, donc nous aurons facilement accès aux meilleurs configurations possibles.
 
 ## Debian
 
@@ -60,13 +60,10 @@ Le type de système importe peut (tant qu'il ressemble à un Linux/Unix). Nous u
 
 # 2. Création du certificat
 
-
 ## Formats de certificats
 
-Les certificats sont fréquemment stockés dans un de ces 2 formats : **DER** et **PEM**.
-Nous allons surtout manipuler des certificats, clés, chaînes de certificats, … au format **PEM**.
-
-Les outils fournis par OpenSSL facilitent la conversion d'un format à l'autre.
+Les certificats sont fréquemment représentés dans un de ces 2 formats : **DER** et **PEM**. **PEM** étant le format par défaut d'OpenSSL,
+nous allons surtout manipuler des certificats, clés, chaînes de certificats, etc. de ce type.
 
 ## Demande d'émission d'un certificat
 
@@ -115,7 +112,7 @@ CGi7
 -----END CERTIFICATE REQUEST-----
 ````
 
-La clé privée ne doit être **communiquée à personne** et être stockée de manière **sécurisée** sur votre serveur. Ici, il s'agit d'un certificat factice donc il n'y a aucun risque à la dévoiler, ça aidera les étapes ultérieures.
+La clé privée ne doit être **communiquée à personne** et être stockée de manière **sécurisée** sur votre serveur (attention aux permissions). Ici, il s'agit d'un certificat factice : le dévoiler ne présente aucun risque.
 
     → cat wildcard_example_com.key.pem
 
@@ -149,37 +146,36 @@ E0pV7+shRPoK7jguy6zzSHK1ygWnqTSn8TePgtIXOoVcZoH6jQBfcA==
 -----END RSA PRIVATE KEY-----
 ````
 
-Gandi propose une vérification par enregistrement DNS, par fichier texte ou par envoi d'un e-mail.
-Chacune a bien sûr ses avantages et inconvénients.
+Gandi propose une vérification par enregistrement DNS, par fichier texte ou par envoi d'un e-mail. Chacune a bien sûr ses avantages et inconvénients.
 
-Si votre serveur est déjà configuré (hors HTTPS) ou si vous avez déjà un compte mail admin@example.com, alors ces 2 méthodes sont les plus rapides.
+Si votre serveur est déjà configuré ou si vous avez déjà une adresse email "admin@example.com", alors ces 2 méthodes sont les plus rapides.
 
-Sinon, l'enregistrement DNS vous permet de préparer tout ça même si le reste de votre infrastructure n'est pas encore prêt. La première vérification n'intervient par contre que 25 minutes après la demande de création du certificat (puis toutes les 5 minutes jusqu'au succès). Ça vous permet de créer l'enregistrement dans la zone DNS et qu'elle se propage.
+L'enregistrement DNS vous permet d'effectuer la vérification même si le reste de votre infrastructure n'est pas encore prêt. La première vérification n'intervient en revanche que 25 minutes après la demande de création du certificat (puis toutes les 5 minutes jusqu'au succès).
 
-Une fois la validation faite, vous pouvez récupérer votre certificat, à stocker dans `/etc/ssl/certs/wildcard_example_com.crt.pem`.
+Une fois la validation effectuée, vous pouvez récupérer votre certificat et le stocker dans `/etc/ssl/certs/wildcard_example_com.crt.pem`.
 
 
 # 3. Configuration du serveur
 
 ## Forward Secrecy
 
-Dans un mécanisme de chiffrement d'un échange à partir d'une clé privée, le problème est que si on met la main sur cette clé, tous les échanges passés et futurs deviennent lisibles. La révocation d'un certificat ne protège pas le déchiffrement de ce qui a été chiffré dans le passé. Dans une situation de surveillance des échanges, on peut tout intercepter/stocker et se dire qu'il sera peut-être possible de tout déchiffrer plus tard. Les agences de renseignement sont soupçonnées d'appliquer ce genre de stratégie.
+Dans un mécanisme de chiffrement d'un échange à partir d'une clé privée, le problème est que si un indésirable met la main sur cette clé, tous les échanges, y compris les échanges passés, deviennent lisibles. La révocation d'un certificat ne suffit pas à empêcher pas le déchiffrement de ce qui a été chiffré dans le passé. Dans une situation de surveillance, on peut tout intercepter et stocker en se disant qu'il sera peut-être possible de déchiffrer les échanges plus tard. Les agences de renseignement sont soupçonnées d'appliquer ce genre de stratégie.
 
-Le principe de **Forward Secrecy** est que le client et le serveur se mettent d'accord sur une clé temporaire de chiffrement. Cette clé restera accessible uniquement le temps de la session TLS. Si une de ces clés est récupérée ou découverte, seules les échanges de la session en question seront déchiffrables.
+Le principe de **Forward Secrecy** est que le client et le serveur se mettent d'accord sur une clé temporaire de chiffrement. Cette clé restera accessible uniquement le temps de la session TLS. Si une de ces clés est récupérée ou découverte, seules les échanges de la session en question seront compromis.
 
-Pour faire fonctionner ce mécanisme, le client et le serveur doivent procéder à un **échange de clé Diffie-Hellman**. Les serveur va communiquer au client un (très grand) nombre premier et un générateur. Cette transmission se fait en clair mais de manière signée (pour éviter un compromission de type [MITM][mitm]). Ces paramètres sont pré-générés et stockés sur le serveur, dans un fichier.
+Pour faire fonctionner ce mécanisme, le client et le serveur doivent procéder à un **échange de clés Diffie-Hellman**. Le serveur va communiquer au client un (très grand) nombre premier et un générateur. Pour éviter un compromission de type [MITM][mitm], le serveur signe l'échange avec sa clé privée. Les paramètres de l'échange sont déterminés à l'avance et stockés sur le serveur.
 
-OpenSSL fourni un outil pour générer ce fichier, avec des paramètres de complexité (en bits). La valeur la plus courante est **2048 bits**. De plus en plus, **4096 bits** sont recommandés. Mais les systèmes anciens (tels que Java 6 et IE6) ne supportent pas plus de **1024 bits**.
+OpenSSL permet de générer le nombre premier et le générateur ainsi que de choisir leur complexité, exprimée en bits. La complexité la plus courante est **2048 bits**. De plus en plus **4096 bits** sont recommandés, mais les systèmes anciens (tels que Java 6 ou IE6) ne supportent pas plus de **1024 bits**.
 
-Au niveau **intermediate** il vaut mieux utiliser (au moins) 2048 bits, même si 1024 bits sont acceptables. Dans nos cas, nous utiliserons 2048 bits, car même le niveau **modern** n'impose pas 4096 bits.
+Au niveau _intermediate_ il vaut mieux utiliser (au moins) 2048 bits, même si 1024 bits sont acceptables. Dans notre cas, nous utiliserons 2048 bits, car même le niveau _modern_ n'impose pas 4096 bits.
 
-La génération des paramètres DH peut prendre plusieurs minutes.
+Attention, la génération des paramètres Diffie-Hellman peut prendre plusieurs minutes :
 
     → cd /etc/ssl/ \
     && openssl dhparam -rand – 2048 -out dhparam-2048.pem \
     && ln -s dhparam-2048.pem dhparam.pem
 
-Ça donne un fichier de ce genre :
+En sortie, le fichier `dhparam.pem` devrait ressembler à ça :
 
 ````
 -----BEGIN DH PARAMETERS-----
@@ -192,12 +188,11 @@ A/q9Cm/STK80ZQkdnfdm7qnJFG/+vJ7LTdIN4L1vMxkaMg2c5q63FQpdPCAQI=
 -----END DH PARAMETERS-----
 ````
 
-Pour faciliter l'utilisation de plusieurs niveau de complexité selon les installations (ou les essais), nous avons écrit le fichier avec un suffix explicite puis créé un lien symbolique.
+Pour faciliter l'utilisation de plusieurs niveaux de complexité selon les installations (ou les essais), nous avons écrit le fichier avec un suffixe explicite puis créé un lien symbolique avec la commande `ln -s`.
 
 ## Hiérarchie des certificats
 
-Le principe des certificats ressemble à un arbre. Il y a quelques **certificats racines** à partir desquels on peut générer d'autres certificats.
-Généralement, ce sont des certificats intermédiaires, servant eux-aussi à faire d'autres certificats intermédiaires ou finaux.
+Pour vérifier l'authenticité des certificats, les clients s'appuient sur un ensemble de certificats racines. Tous les certificats sont signés à partir de ces **certificats racines** ou de certificats descendant eux-mêmes de ces certificats racines : les ceritificats intermédiaires. Généralement, ce sont ces derniers qui sont utilisés pour signer nos certificats finaux.
 
 Dans notre cas, nous avons :
 
@@ -206,19 +201,19 @@ Dans notre cas, nous avons :
 - la branche (2) `Gandi Standard SSL CA2`
 - la feuille (3) `*.example.com`
 
-Notez bien cet ordre car il nous servira pour les 2 fichiers de chaîne.
+Notez bien cet ordre car il nous servira pour créer les deux fichiers de chaîne.
 
 ## Fichier de la chaîne de certificats
 
-Il est nécessaire d'indiquer au serveur web, non pas simplement le certificat du domaine, mais également ses certificats intermédiaires.
+Il est nécessaire d'indiquer au serveur web non seulement le certificat de notre domaine, mais aussi tous les certificats intermédiaires.
 
-Nous allons créer un fichier `/etc/ssl/certs/wildcard_example_com.chain.pem` qui contiendra, dans l'ordre :
+Le certificat racine étant connu, nous allons créer un fichier `/etc/ssl/certs/wildcard_example_com.chain.pem` qui contiendra, dans l'ordre, les trois niveaux restants :
 
 - le certificat généré par Gandi (**feuille 3**) ;
 - le certificat intermédiaire de Gandi (**branche 2**) ;
 - le certificat _cross-signed_ (**branche 1**).
 
-Voici la commande pour générer ce fichier :
+Pour générer le fichier de chaîne :
 
     → cd /etc/ssl/certs/ \
     && echo -n '' > wildcard_example_com.chain.pem \
@@ -228,20 +223,20 @@ Voici la commande pour générer ce fichier :
 
 Explications :
 
-- on se déplace dans `/etc/ssl/certs` où out va se passer ;
-- le premier `echo` s'assure que le fichier commence vide ;
-- le certificat du domaine (directement au format `PEM`) ;
-- le certificat de Gandi (directement au format `PEM`) ;
-- le certificat _cross-signed_ (au format `DER` il faut donc le convertir avant de l'ajouter) ;
+- on se place dans `/etc/ssl/certs` ;
+- le `echo` crée un fichier vide ;
+- on ajoute le certificat du domaine (directement au format `PEM`) ;
+- on ajoute le certificat de Gandi (directement au format `PEM`) ;
+- on ajoute le certificat _cross-signed_ (au format `DER`, il faut donc le convertir avant de l'ajouter) ;
 - l'utilisation de `tee` permet d'ajouter un `sudo` si besoin.
 
-Pour des certificats **SSL Pro**, le certificat intermédiaire de Gandi est différent, mais le principe est le même.
+Pour des certificats **SSL Pro**, le certificat intermédiaire de Gandi est différent, mais le principe et les manipulations sont identiques.
 
 ## Fichier des certificats agrafés (_stapling_)
 
-La plupart des clients qui se connecteront au serveur web voudront vérifier la non-révocation du certificat. 2 stratégies permettent cette vérification : via un fichier CRL (_Certificate Revocation List_), mais vu le nombre de certificats en circulation ça devient impraticable, ou alors via un interrogation OCSP (_Online Certificate Status Protocol_).
+La plupart des clients qui se connecteront au serveur web voudront vérifier la non-révocation du certificat. Deux stratégies permettent cette vérification : via un fichier CRL (_Certificate Revocation List_), mais vu le nombre de certificats en circulation ça devient impraticable, ou alors via une interrogation OCSP (_Online Certificate Status Protocol_).
 
-Pour éviter au client de faire une requête additionnelle, le serveur peut mettre en cache le résultat de cette vérification et la servir directement au client. Pour cela il faut indiquer à Nginx la liste des certificats, concaténés dans un seul fichier.
+Pour éviter au client de faire une requête additionnelle, le serveur peut mettre en cache le résultat de cette vérification et la servir directement au client. Pour cela il faut indiquer au serveur Nginx la liste des certificats concaténés dans un seul fichier.
 
 Les certificats doivent être dans l'ordre de la hiérarchie, en partant de celui qui a signé notre certificat (ici `GandiStandardSSLCA2`) et en remontant jusqu'à la racine.
 
@@ -259,7 +254,7 @@ Voici la commande :
     && wget -O - http://crt.usertrust.com/USERTrustRSAAddTrustCA.crt | openssl x509 -inform DER -outform PEM | tee -a gandi-standardssl-2.chain.pem> /dev/null \
     && cat AddTrust_External_Root.pem | tee -a gandi-standardssl-2.chain.pem
 
-## Récapitulatif des fichiers de certificats.
+## Récapitulatif des fichiers de certificats
 
 ### `/etc/ssl/certs/gandi-standardssl-2.chain.pem`
 
@@ -267,38 +262,38 @@ C'est la chaîne des certificats à utiliser pour _OCSP stapling_. Ce fichier pe
 
 Il n'est pas indispensable pour faire fonctionner le domaine en HTTPS mais c'est utile pour les performances du site.
 
-### `/etc/ssl/certs/wildcard_example_com.chain.pem` 
+### `/etc/ssl/certs/wildcard_example_com.chain.pem`
 
-Il contient le certificat du domaine, plus ses certificats intermédiaires.
+Il contient le certificat du domaine et les certificats intermédiaires.
 
 ### `/etc/ssl/certs/wildcard_example_com.crt.pem`
 
-Il contient seulement le certificat du domaine. Il ne sera pas utilisé directement par le serveur web, mais il est pratique de le garder.
+Il contient seulement le certificat du domaine. Il ne sera pas utilisé directement par le serveur web, mais il est pratique de le conserver.
 
 ### `/etc/ssl/private/wildcard_example_com.csr.pem`
 
-C'est la demande du certificat. Il est inutile sur le serveur, mais il peut être pratique pour vérifier pus tard comment la demande initiale a été faite.
+C'est le fichier contenant la demande de création d'un certificat. Il est inutile sur le serveur, mais il est intéressant de le conserver pour vérifier comment la demande initiale avait été effectuée.
 
 ### `/etc/ssl/private/wildcard_example_com.key.pem`
 
 C'est la clé privée du certificat. Ce fichier est indispensable.
 
-### droits d'accès
+### Droits d'accès
 
 La clé privée doit être accessible uniquement en lecture et par le seul compte root. Il est recommandé de créer la clef privée directement dans un dossier accessible uniquement par root (par exemple: /etc/ssl/private).
 
     → chmod 640 /etc/ssl/private/wildcard_example_com.key.pem
     → chown root:ssl-cert /etc/ssl/private/wildcard_example_com.key.pem
 
-Les fichiers dans `/etc/ssl/certs` peuvent être accessible en lecture à tout le monde, mais seulement aux administrateurs pour l'écriture.
+Les fichiers présents dans `/etc/ssl/certs` peuvent être accessibles en lecture à tout le monde, mais seulement aux administrateurs pour l'écriture.
 
 ## Nginx
 
-La configuration de Nginx se fait via le fichier `/etc/nginx/nginx.conf`, dans lequel on trouve des réglages généraux. Il y aussi une section pour la partie `http` dans laquelle on trouve des sections `server`. Toutes ces sections sont appelées **bloc** car elles utilisent une syntaxe à base d'accolades et sont imbriquées.
+La configuration de Nginx se fait via le fichier `/etc/nginx/nginx.conf` dans lequel on trouve ses réglages généraux. Il y aussi une section pour la partie `http` dans laquelle on trouve des sections `server`. Toutes ces sections sont appelées **bloc** car elles utilisent une syntaxe à base d'accolades et sont imbriquées.
 
-Par habitude on extrait souvent les blocs spécifiques aux sites et applications gérées dans des fichiers spécifiques, inclus dans la configuration principale par la directive `include`.
+Par habitude on extrait souvent les blocs spécifiques aux sites et applications gérées dans des fichiers spécifiques, que l'on inclut ensuite dans la configuration principale via la directive `include`.
 
-Voici un exemple typique de configuration
+Voici un exemple typique de configuration :
 
     → cat /etc/nginx/nginx.conf
 
@@ -327,9 +322,7 @@ http {
 }
 ````
 
-Ici on voit que tous les fichiers présents dans `/etc/nginx/sites-enabled` sont automatiquement inclus.
-
-Nous allons placer notre configuration pour le site `www.example.com` dans `/etc/nginx/sites-enabled/www_example_com.conf`
+On peut voir que tous les fichiers présents dans `/etc/nginx/sites-enabled` sont automatiquement inclus. Nous allons donc placer la configuration de notre site `www.example.com` dans `/etc/nginx/sites-enabled/www_example_com.conf`
 
     → cat /etc/nginx/sites-enabled/www_example_com.conf
 
@@ -350,7 +343,7 @@ server {
 }
 ````
 
-Comme nous mettons en place un certificat SSL _wildcard_ pour le domaine, il est probable que nous réutilisions la partie SSL pour plusieurs configurations de sites. Nous la placerons alors dans `/etc/nginx/wildcard_example_com.conf`
+Comme nous mettons en place un certificat SSL _wildcard_ pour le domaine, il est probable que nous réutiliserons la partie SSL pour plusieurs configurations de sites (sous-domaines). Nous la placerons donc dans `/etc/nginx/wildcard_example_com.conf`
 
     → cat /etc/nginx/wildcard_example_com.conf
 
@@ -374,52 +367,48 @@ ssl_trusted_certificate /etc/ssl/gandi-standardssl-2.chain.pem;
 resolver 127.0.0.1;
 ````
 
-Les 2 premières lignes concernent les fichiers servant à chiffrer la connexion : le certificat et la clé privée.
+Les deux premières lignes concernent les fichiers servant à chiffrer la connexion : le certificat et la clé privée.
 
-`ssl_session_timeout` et `ssl_session_cache` permettent de préciser où, quelle quantité et combien de temps garder les sessions SSL. J'ai appliqué ici les recommandations de [Server-Side TLS][server-side-tls].
+`ssl_session_timeout` et `ssl_session_cache` permettent de préciser la durée de vie des sessions SSL, leur emplacement et le nombre maximal de sessions. J'ai appliqué ici les recommandations de [Server-Side TLS][server-side-tls].
 
-`ssl_dhparam` indique l'emplacement du fichier des paramètres (généré plus haut) pour l'échange de clé Diffie-Hellman. Nous verrons un peu plus loin comment générer ce fichier.
+`ssl_dhparam` indique l'emplacement du fichier des paramètres (généré plus haut) pour l'échange de clés Diffie-Hellman.
 
-`ssl_protocols` est la liste des protocoles acceptés par le serveur. À ce jour, seuls les versions `TLSv1`, `TLSv1.1` et `TLSv1.2` de TLS sont acceptables. Plus d'info sur l'[historique de SSL/TLS](http://fr.wikipedia.org/wiki/Transport_Layer_Security#Historique) sur Wikipedia. Les failles récentes de `SSLv3` nous on poussé à le retirer autant que possible des listes de protocoles utilisés.
+`ssl_protocols` est la liste des protocoles de chiffrement acceptés par le serveur. À ce jour, seuls les versions `TLSv1`, `TLSv1.1` et `TLSv1.2` de TLS sont acceptables. Plus d'info sur l'[historique de SSL/TLS](http://fr.wikipedia.org/wiki/Transport_Layer_Security#Historique) sur Wikipedia. Les failles récentes de `SSLv3` nous ont poussés à le retirer autant que possible des listes de protocoles utilisés.
 
 `ssl_ciphers` est la liste ordonnée des ciphers (algorithmes de chiffrement) qui sont acceptés.
 
 `ssl_prefer_server_ciphers` indique que la liste et l'ordre du serveur priment sur ceux indiqués par le client.
 
-`ssl_stapling` et `ssl_stapling_verify` permettent d'activer la fonction de **OCSP stapling**, expliquée plus loin. `ssl_trusted_certificate` indique à Nginx où trouver le fichier de la chaîne de certificats (généré plus haut).
+`ssl_stapling` et `ssl_stapling_verify` permettent d'activer la fonction de **OCSP stapling**, expliquée plus haut. `ssl_trusted_certificate` indique à Nginx où trouver le fichier de la chaîne de certificats (généré plus haut).
 
-Enfin, `resolver` indique l'adresse qu'il faut interroger pour les résolutions de nom servant à la vérification de validité des certificats parents, via le protocole `OCSP`.
+Enfin, `resolver` indique l'adresse qu'il faut interroger pour les résolutions de nom, utilisée lors de la vérification de validité des certificats parents, via le protocole `OCSP`.
 
 # 4. Vérifications
 
-Pendant toute la durée des vérifications, je conseille de suivre les logs d'erreur de Nginx.
-Si une erreur s'est glissée quelque part, vous aurez plus de chance de la repérer comme ça.
-Il se peut par exemple que l'adresse du _resolver_ ne soit pas bonne (vécu sur un serveur sans _resolver_ local).
+Pendant toute la durée des vérifications, je conseille de suivre les logs d'erreur de Nginx. Si une erreur s'est glissée quelque part, vous aurez ainsi plus de facilité à la repérer. Une erreur courante est une adresse de _resolver_ invalide (vécu sur un serveur sans _resolver_ local).
 
     → tail -f /var/log/nginx/error.log
 
-Une fois tout ceci configuré, il faut vérifier la configuration de Nginx et la recharger si tout va bien :
+Une fois tout ceci configuré, il faut vérifier la configuration de Nginx puis, si elle est valide, la recharger :
 
     → service nginx configtest
     → service nginx reload
 
 ## Dans un navigateur
 
-Le 1er test le plus simple est de se rendre à l'adresse du site via un navigateur. La plupart d'entre eux a un signe distinctif dans la barre d'adresse qui indique si la navigation est chiffrée ou pas t si l certificat utilisé est correctement configuré.
+Le premier test, et le plus simple, est de se rendre à l'adresse du site via un navigateur. La plupart des navigateurs propose un signe distinctif dans la barre d'adresse, qui indique si la navigation est chiffrée ou pas, si le certificat est valide.
 
 Dans Chrome par exemple si vous avez un joli cadenas vert, tout va bien.
-S'il est gris avec un triangle jaune, c'est presque bon mais il y a des obstacle à une navigation proprement chiffrée de bout en bout (certificat trop faible, sous-requêtes non chiffrées …).
+S'il est gris avec un triangle jaune, c'est presque bon mais il y a des obstacles à une navigation proprement chiffrée de bout en bout (certificat trop faible, sous-requêtes non chiffrées …).
 S'il est rouge et/ou barré, alors quelque chose ne va pas du tout.
 
 Et si aucun cadenas n'apparaît, c'est que la communication n'est pas chiffrée du tout.
 
 ## Avec [SSLLabs][ssllabs]
 
-Très bon outil en mode web pour vérifier la configuration SSL/TLS d'un domaine. Vous indiquez votre domaine et au bout d'une poignée de minute il vous rend un rapport complet.
+Très bon outil en mode web pour vérifier la configuration SSL/TLS d'un domaine. Vous indiquez votre domaine et au bout d'une poignée de minutes il vous rend un rapport complet.
 
-Une note synthétique vous indique la qualité de votre configuration.
-Des conseils vous indiquent ce qu'il faut améliorer.
-Le détail de toutes les constations vos permet de savoir exactement ce qu'il en est.
+Une note synthétique vous indique la qualité de votre configuration et des conseils vous aident à identifier ce qu'il faut améliorer.
 
 ## Avec [CipherScan][cipherscan]
 

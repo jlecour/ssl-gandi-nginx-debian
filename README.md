@@ -513,6 +513,10 @@ Julien est OpSec chez Mozilla. Il est l'auteur de [Server-Side TLS][server-side-
 
 Un outil d'aide à la configuration de Apache/Nginx/HAProxy, basé sur les recommandations de [Server-Side TLS][server-side-tls].
 
+## [Howto SSL][howto-ssl-evolix]
+
+Mon [hébergeur favori][evolix] maintient un excellent [Wiki sur l'infogérance Linux/BSD][wiki-evolix]. Ils ont notamment un [article sur les certificats SSL][howto-ssl-evolix], avec des exemples plus précis de manipulation de certificats.
+
 # Contributions
 
 Merci à ceux qui m'ont relu, conseillé, proposé des corrections et clarifications.
@@ -521,7 +525,9 @@ Merci à ceux qui m'ont relu, conseillé, proposé des corrections et clarificat
 - [Jérôme Pinguet](https://github.com/jeromecc)
 - [Benoît.S](https://twitter.com/benpro82)
 
-
+[evolix]: http://www.evolix.fr "Evolix"
+[howto-ssl-evolix]: http://trac.evolix.net/infogerance/wiki/HowtoSSL "Howto SSL"
+[wiki-evolix]: http://trac.evolix.net/infogerance/wiki "Infogerance Linux et BSD"
 [mitm]: http://fr.wikipedia.org/wiki/Attaque_de_l%27homme_du_milieu "Man In The Middle"
 [jeveuxhttps]: https://www.jeveuxhttps.fr/ "Je Veux HTTPS"
 [jvehent]: http://jve.linuxwall.info/ "Julien Véhent"

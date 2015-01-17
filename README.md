@@ -370,21 +370,17 @@ ssl_trusted_certificate /etc/ssl/gandi-standardssl-2.chain.pem;
 resolver 127.0.0.1;
 ````
 
-Les deux premières lignes concernent les fichiers servant à chiffrer la connexion : le certificat et la clé privée.
+_Ci-dessous, le nom des directives est cliquable et conduit vers la documentation de Nginx._
 
-`ssl_session_timeout` et `ssl_session_cache` permettent de préciser où, quelle quantité et combien de temps garder les sessions SSL. J'ai appliqué ici les recommandations de [Server-Side TLS][server-side-tls].
-
-`ssl_dhparam` indique l'emplacement du fichier des paramètres (généré plus haut) pour l'échange de clés Diffie-Hellman.
-
-`ssl_protocols` est la liste des protocoles de chiffrement acceptés par le serveur. À ce jour, seuls les versions `TLSv1`, `TLSv1.1` et `TLSv1.2` de TLS sont acceptables. Plus d'info sur l'[historique de SSL/TLS](http://fr.wikipedia.org/wiki/Transport_Layer_Security#Historique) sur Wikipedia. Les failles récentes de `SSLv3` nous ont poussés à le retirer autant que possible des listes de protocoles utilisés.
-
-`ssl_ciphers` est la liste ordonnée des ciphers (algorithmes de chiffrement) qui sont acceptés.
-
-`ssl_prefer_server_ciphers` indique que la liste et l'ordre du serveur priment sur ceux indiqués par le client.
-
-`ssl_stapling` et `ssl_stapling_verify` permettent d'activer la fonction de **OCSP stapling**, expliquée plus haut. `ssl_trusted_certificate` indique à Nginx où trouver le fichier de la chaîne de certificats (généré plus haut).
-
-Enfin, `resolver` indique l'adresse qu'il faut interroger pour les résolutions de nom, utilisée lors de la vérification de validité des certificats parents, via le protocole `OCSP`.
+- [`ssl_certificate`](http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_certificate) est l'emplacement du fichier de certificat
+- [`ssl_certificate_key`](http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_certificate_key) est l'emplacement du fichier de la clé privée du certificat
+- [`ssl_session_timeout`](http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_session_timeout) et [`ssl_session_cache`](http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_session_cache) permettent de préciser où, quelle quantité et combien de temps garder les sessions SSL. J'ai appliqué ici les recommandations de [Server-Side TLS][server-side-tls].
+- [`ssl_dhparam`](http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_dhparam) indique l'emplacement du fichier des paramètres (généré plus haut) pour l'échange de clés Diffie-Hellman.
+- [`ssl_protocols`](http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_protocols) est la liste des protocoles de chiffrement acceptés par le serveur. À ce jour, seuls les versions `TLSv1`, `TLSv1.1` et `TLSv1.2` de TLS sont acceptables. Plus d'info sur l'[historique de SSL/TLS](http://fr.wikipedia.org/wiki/Transport_Layer_Security#Historique) sur Wikipedia. Les failles récentes de `SSLv3` nous ont poussés à le retirer autant que possible des listes de protocoles utilisés.
+- [`ssl_ciphers`](http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_ciphers) est la liste ordonnée des ciphers (algorithmes de chiffrement) qui sont acceptés.
+- [`ssl_prefer_server_ciphers`](http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_prefer_server_ciphers) indique que la liste et l'ordre du serveur priment sur ceux indiqués par le client.
+- [`ssl_stapling`](http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_stapling) et [`ssl_stapling_verify`](http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_stapling_verify) permettent d'activer la fonction de **OCSP stapling**, expliquée plus haut. [`ssl_trusted_certificate`](http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_trusted_certificate) indique à Nginx où trouver le fichier de la chaîne de certificats (généré plus haut).
+- [`resolver`](http://nginx.org/en/docs/http/ngx_http_ssl_module.html#resolver) indique l'adresse qu'il faut interroger pour les résolutions de nom, utilisée lors de la vérification de validité des certificats parents, via le protocole `OCSP`.
 
 # 4. Vérifications
 

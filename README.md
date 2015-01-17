@@ -515,6 +515,7 @@ Merci à ceux qui m'ont relu, conseillé, proposé des corrections et clarificat
 - [Jef Mathiot](https://github.com/jefmathiot)
 - [Jérôme Pinguet](https://github.com/jeromecc)
 - [Benoît.S](https://twitter.com/benpro82)
+- [Geoffroy Desvernay](https://github.com/dgeo)
 
 [evolix]: http://www.evolix.fr "Evolix"
 [howto-ssl-evolix]: http://trac.evolix.net/infogerance/wiki/HowtoSSL "Howto SSL"

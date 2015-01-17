@@ -1,16 +1,8 @@
 # README
 
-Cet texte est en cours à l'état de **brouillon**.
-
-Je découvre le sujet, j'ai donc probablement fait des confusions, raté des conventions, mélangé des concepts, et peut-être même insulté des divinités.
-
-N'hésitez pas à utiliser tous les moyens nécessaires ([issue](https://github.com/jlecour/ssl-gandi-nginx-debian/issues/new) ou [pull-request](https://github.com/jlecour/ssl-gandi-nginx-debian/pulls) GitHub, [twitter][jlecour], mail …) pour me faire vos retours, sur le fond comme sur la forme.
-
-Tous les fichiers sont présents dans l'arborescence partant de [/etc](etc) : config Nginx, fichiers de certificat, …
-Ils correspondent à un vrai certificat, pour le domaine `www.example.com`, sauf que Gandi ne l'a jamais réellement généré et son contenu est bidon.
-
-La plupart des commandes décrites ici doit être exécutée par un utilisateur privilégié, comme **root**.
-Seules les commandes liées au vérification post-installation peuvent être exécutées avec un utilisateur normal.
+> Cet texte est en cours à l'état de **brouillon**.
+> Je découvre le sujet, j'ai donc probablement fait des confusions, raté des conventions, mélangé des concepts, et peut-être même insulté des divinités.
+> N'hésitez pas à utiliser tous les moyens nécessaires ([issue](https://github.com/jlecour/ssl-gandi-nginx-debian/issues/new) ou [pull-request](https://github.com/jlecour/ssl-gandi-nginx-debian/pulls) GitHub, [twitter][jlecour], mail …) pour me faire vos retours, sur le fond comme sur la forme.
 
 **Sommaire** :
 
@@ -23,6 +15,12 @@ Seules les commandes liées au vérification post-installation peuvent être ex�
 # 1. Objectif
 
 L'objectif est de protéger les communications entre un serveur web et ses clients en SSL et en respectant le plus possible les règles de l'art, mais dans un contexte précis, celui de certificats _wildcard_ délivrés par Gandi.
+
+Tous les fichiers sont présents dans l'arborescence partant de [/etc](etc) : config Nginx, fichiers de certificat, …
+Ils correspondent à un vrai certificat, pour le domaine `www.example.com`, sauf que Gandi ne l'a jamais réellement généré et son contenu est bidon.
+
+La plupart des commandes décrites ici doit être exécutée par un utilisateur privilégié, comme **root**.
+Seules les commandes liées au vérification post-installation peuvent être exécutées avec un utilisateur normal.
 
 ## Certificat _wildcard_ SSL Standard, délivré par Gandi
 

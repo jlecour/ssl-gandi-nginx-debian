@@ -455,7 +455,8 @@ ssl_trusted_certificate /etc/ssl/gandi-standardssl-2.chain.pem;
 <li>
 <a href="http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_protocols"><code>ssl_protocols</code></a> est la liste des protocoles de chiffrement acceptés par le serveur. À ce jour, seuls les versions <code>TLSv1</code>, <code>TLSv1.1</code> et <code>TLSv1.2</code> de TLS sont acceptables. Plus d'info sur l'<a href="http://fr.wikipedia.org/wiki/Transport_Layer_Security#Historique">historique de SSL/TLS</a> sur Wikipedia. Les failles récentes de <code>SSLv3</code> nous ont poussés à le retirer autant que possible des listes de protocoles utilisés.</li>
 <li>
-<a href="http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_ciphers"><code>ssl_ciphers</code></a> est la liste ordonnée des ciphers (algorithmes de chiffrement) qui sont acceptés.</li>
+<a href="http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_ciphers"><code>ssl_ciphers</code></a> est la liste ordonnée des ciphers (algorithmes de chiffrement) qui sont acceptés. La liste est directement issue du <a href="https://mozilla.github.io/server-side-tls/ssl-config-generator/" title="SSL config generator">générateur de configuration</a> de <a href="https://wiki.mozilla.org/Security/Server_Side_TLS" title="Server Side TLS">Server-Side TLS</a>
+</li>
 <li>
 <a href="http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_prefer_server_ciphers"><code>ssl_prefer_server_ciphers</code></a> indique que la liste et l'ordre du serveur priment sur ceux indiqués par le client.</li>
 <li>

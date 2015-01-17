@@ -1,5 +1,7 @@
 # README
 
+Une version plus "jolie" est [consultable ici][gh-page].
+
 > Je découvre le sujet, j'ai donc probablement fait des confusions, raté des conventions, mélangé des concepts, et peut-être même insulté des divinités.
 > N'hésitez pas à utiliser tous les moyens nécessaires ([issue](https://github.com/jlecour/ssl-gandi-nginx-debian/issues/new) ou [pull-request](https://github.com/jlecour/ssl-gandi-nginx-debian/pulls) GitHub, [twitter][jlecour], mail …) pour me faire vos retours, sur le fond comme sur la forme.
 
@@ -522,6 +524,7 @@ Merci à ceux qui m'ont relu, conseillé, proposé des corrections et clarificat
 - [Benoît.S](https://twitter.com/benpro82)
 - [Geoffroy Desvernay](https://github.com/dgeo)
 
+[gh-page]: http://jlecour.github.io/ssl-gandi-nginx-debian/
 [evolix]: http://www.evolix.fr "Evolix"
 [howto-ssl-evolix]: http://trac.evolix.net/infogerance/wiki/HowtoSSL "Howto SSL"
 [wiki-evolix]: http://trac.evolix.net/infogerance/wiki "Infogerance Linux et BSD"

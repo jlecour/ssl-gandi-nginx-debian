@@ -445,24 +445,24 @@ ssl_trusted_certificate /etc/ssl/gandi-standardssl-2.chain.pem;
 
 <ul>
 <li>
-<a href="http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_certificate"><code>ssl_certificate</code></a> est l'emplacement du fichier de certificat</li>
+<a href="http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_certificate">ssl_certificate</a> est l'emplacement du fichier de certificat</li>
 <li>
-<a href="http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_certificate_key"><code>ssl_certificate_key</code></a> est l'emplacement du fichier de la clé privée du certificat</li>
+<a href="http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_certificate_key">ssl_certificate_key</a> est l'emplacement du fichier de la clé privée du certificat</li>
 <li>
-<a href="http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_session_timeout"><code>ssl_session_timeout</code></a> et <a href="http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_session_cache"><code>ssl_session_cache</code></a> permettent de préciser où, quelle quantité et combien de temps garder les sessions SSL. J'ai appliqué ici les recommandations de <a href="https://wiki.mozilla.org/Security/Server_Side_TLS" title="Server Side TLS">Server-Side TLS</a>.</li>
+<a href="http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_session_timeout">ssl_session_timeout</a> et <a href="http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_session_cache">ssl_session_cache</a> permettent de préciser où, quelle quantité et combien de temps garder les sessions SSL. J'ai appliqué ici les recommandations de <a href="https://wiki.mozilla.org/Security/Server_Side_TLS" title="Server Side TLS">Server-Side TLS</a>.</li>
 <li>
-<a href="http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_dhparam"><code>ssl_dhparam</code></a> indique l'emplacement du fichier des paramètres (généré plus haut) pour l'échange de clés Diffie-Hellman.</li>
+<a href="http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_dhparam">ssl_dhparam</a> indique l'emplacement du fichier des paramètres (généré plus haut) pour l'échange de clés Diffie-Hellman.</li>
 <li>
-<a href="http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_protocols"><code>ssl_protocols</code></a> est la liste des protocoles de chiffrement acceptés par le serveur. À ce jour, seuls les versions <code>TLSv1</code>, <code>TLSv1.1</code> et <code>TLSv1.2</code> de TLS sont acceptables. Plus d'info sur l'<a href="http://fr.wikipedia.org/wiki/Transport_Layer_Security#Historique">historique de SSL/TLS</a> sur Wikipedia. Les failles récentes de <code>SSLv3</code> nous ont poussés à le retirer autant que possible des listes de protocoles utilisés.</li>
+<a href="http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_protocols">ssl_protocols</a> est la liste des protocoles de chiffrement acceptés par le serveur. À ce jour, seuls les versions <code>TLSv1</code>, <code>TLSv1.1</code> et <code>TLSv1.2</code> de TLS sont acceptables. Plus d'info sur l'<a href="http://fr.wikipedia.org/wiki/Transport_Layer_Security#Historique">historique de SSL/TLS</a> sur Wikipedia. Les failles récentes de <code>SSLv3</code> nous ont poussés à le retirer autant que possible des listes de protocoles utilisés.</li>
 <li>
-<a href="http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_ciphers"><code>ssl_ciphers</code></a> est la liste ordonnée des ciphers (algorithmes de chiffrement) qui sont acceptés. La liste est directement issue du <a href="https://mozilla.github.io/server-side-tls/ssl-config-generator/" title="SSL config generator">générateur de configuration</a> de <a href="https://wiki.mozilla.org/Security/Server_Side_TLS" title="Server Side TLS">Server-Side TLS</a>
+<a href="http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_ciphers">ssl_ciphers</a> est la liste ordonnée des ciphers (algorithmes de chiffrement) qui sont acceptés. La liste est directement issue du <a href="https://mozilla.github.io/server-side-tls/ssl-config-generator/" title="SSL config generator">générateur de configuration</a> de <a href="https://wiki.mozilla.org/Security/Server_Side_TLS" title="Server Side TLS">Server-Side TLS</a>
 </li>
 <li>
-<a href="http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_prefer_server_ciphers"><code>ssl_prefer_server_ciphers</code></a> indique que la liste et l'ordre du serveur priment sur ceux indiqués par le client.</li>
+<a href="http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_prefer_server_ciphers">ssl_prefer_server_ciphers</a> indique que la liste et l'ordre du serveur priment sur ceux indiqués par le client.</li>
 <li>
-<a href="http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_stapling"><code>ssl_stapling</code></a> et <a href="http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_stapling_verify"><code>ssl_stapling_verify</code></a> permettent d'activer la fonction de <strong>OCSP stapling</strong>, expliquée plus haut. <a href="http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_trusted_certificate"><code>ssl_trusted_certificate</code></a> indique à Nginx où trouver le fichier de la chaîne de certificats (généré plus haut).</li>
+<a href="http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_stapling">ssl_stapling</a> et <a href="http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_stapling_verify">ssl_stapling_verify</a> permettent d'activer la fonction de <strong>OCSP stapling</strong>, expliquée plus haut. <a href="http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_trusted_certificate">ssl_trusted_certificate</a> indique à Nginx où trouver le fichier de la chaîne de certificats (généré plus haut).</li>
 <li>
-<a href="http://nginx.org/en/docs/http/ngx_http_ssl_module.html#resolver"><code>resolver</code></a> indique l'adresse qu'il faut interroger pour les résolutions de nom, utilisée lors de la vérification de validité des certificats parents, via le protocole <code>OCSP</code>.</li>
+<a href="http://nginx.org/en/docs/http/ngx_http_ssl_module.html#resolver">resolver</a> indique l'adresse qu'il faut interroger pour les résolutions de nom, utilisée lors de la vérification de validité des certificats parents, via le protocole <code>OCSP</code>.</li>
 </ul>
 
 <h1>

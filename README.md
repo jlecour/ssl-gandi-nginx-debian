@@ -12,6 +12,14 @@ Ils correspondent à un vrai certificat, pour le domaine `www.example.com`, sauf
 La plupart des commandes décrites ici doit être exécutée par un utilisateur privilégié, comme **root**.
 Seules les commandes liées au vérification post-installation peuvent être exécutées avec un utilisateur normal.
 
+**Sommaire** :
+
+1. [Objectif](#1-objectif)
+2. [Création du certificat](#2-cr%C3%A9ation-du-certificat)
+3. [Configuration du serveur](#3-configuration-du-serveur)
+4. [Vérifications](#4-v%C3%A9rifications)
+5. [Ressources utiles](#5-ressources-utiles)
+
 # 1. Objectif
 
 L'objectif est de protéger les communications entre un serveur web et ses clients en SSL et en respectant le plus possible les règles de l'art, mais dans un contexte précis, celui de certificats _wildcard_ délivrés par Gandi.
@@ -480,31 +488,31 @@ Des version binaires d'OpenSSL sont fournies au cas où le système hôte n'en d
 
 Aussi bien `cipherscan` que `analyze.py` peuvent utiliser la version du système ou une version spécifique (avec l'option `-o`).
 
-# Quelques ressources utiles
+# 5. Ressources utiles
 
 
-## [How 2 SSL][how2ssl] (en anglais)
+**[How 2 SSL][how2ssl] (en anglais)**
 
 Une sorte de mini-wiki sur le SSL avec des clarifications et des approfondissements de certains concepts clés.
 
-## [Je Veux HTTPS][jeveuxhttps] (en français)
+**[Je Veux HTTPS][jeveuxhttps] (en français)**
 
 Un bon site, écrit en français. Si je ne l'avais pas découvert tardivement, je n'aurais probablement pas écrit cet article.
 
-## [Server-Side TLS][server-side-tls] (en anglais)
+**[Server-Side TLS][server-side-tls] (en anglais)**
 
 Un long guide, très complet, à propos de la mise en place de TLS côté serveur, avec des explications concrètes et claires sur tous les éléments en jeu.
 
-## [TLS with Nginx and StartSSL](https://jve.linuxwall.info/blog/index.php?post/2013/10/12/A-grade-SSL/TLS-with-Nginx-and-StartSSL) (en anglais)
+**[TLS with Nginx and StartSSL](https://jve.linuxwall.info/blog/index.php?post/2013/10/12/A-grade-SSL/TLS-with-Nginx-and-StartSSL) (en anglais)**
 
 Un article de [Julien Véhent][jvehent] sur un thème similaire.
 Julien est OpSec chez Mozilla. Il est l'auteur de [Server-Side TLS][server-side-tls].
 
-## [SSL config generator][ssl-config-generator] (en anglais)
+**[SSL config generator][ssl-config-generator] (en anglais)**
 
 Un outil d'aide à la configuration de Apache/Nginx/HAProxy, basé sur les recommandations de [Server-Side TLS][server-side-tls].
 
-## [Howto SSL][howto-ssl-evolix]
+**[Howto SSL][howto-ssl-evolix]**
 
 Mon [hébergeur favori][evolix] maintient un excellent [Wiki sur l'infogérance Linux/BSD][wiki-evolix]. Ils ont notamment un [article sur les certificats SSL][howto-ssl-evolix], avec des exemples plus précis de manipulation de certificats.
 

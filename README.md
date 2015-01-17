@@ -1,6 +1,5 @@
 # README
 
-> Cet texte est en cours à l'état de **brouillon**.
 > Je découvre le sujet, j'ai donc probablement fait des confusions, raté des conventions, mélangé des concepts, et peut-être même insulté des divinités.
 > N'hésitez pas à utiliser tous les moyens nécessaires ([issue](https://github.com/jlecour/ssl-gandi-nginx-debian/issues/new) ou [pull-request](https://github.com/jlecour/ssl-gandi-nginx-debian/pulls) GitHub, [twitter][jlecour], mail …) pour me faire vos retours, sur le fond comme sur la forme.
 

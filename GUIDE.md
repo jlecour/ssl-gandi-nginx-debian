@@ -412,6 +412,13 @@ Très bon outil en mode web pour vérifier la configuration SSL/TLS d'un domaine
 Une note synthétique vous indique la qualité de votre configuration.
 Des conseils vous indiquent ce qu'il faut améliorer. Le détail de toutes les constations vos permet de savoir exactement ce qu'il en est.
 
+En suivant les recommandations de ce guide, j'ai obtenu une note générale de **A+** :
+
+- Certificate : 100%
+- Protocol Support : 95%
+- KeyExchange : 90%
+- Cipher Strength : 90%
+
 ## Avec [CipherScan][cipherscan]
 
 Il s'agit de quelques outils, écrits par [Julien Véhent][jvehent], pour analyser la configuration d'un domaine et faire des recommandations concrètes.

@@ -31,12 +31,7 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <blockquote>
-<p>Je découvre le sujet, j'ai donc probablement fait des confusions, raté des conventions, mélangé des concepts, et peut-être même insulté des divinités.
-N'hésitez pas à utiliser tous les moyens nécessaires (<a href="https://github.com/jlecour/ssl-gandi-nginx-debian/issues/new">issue</a> ou <a href="https://github.com/jlecour/ssl-gandi-nginx-debian/pulls">pull-request</a> GitHub, <a href="https://twitter.com/jlecour" title="@jlecour">twitter</a>, mail …) pour me faire vos retours, sur le fond comme sur la forme.</p>
-</blockquote>
-
-<p><strong>Sommaire</strong> :</p>
+        <p><strong>Sommaire</strong> :</p>
 
 <ol>
 <li><a href="#1-objectif">Objectif</a></li>
@@ -51,7 +46,7 @@ N'hésitez pas à utiliser tous les moyens nécessaires (<a href="https://github
 
 <p>L'objectif est de protéger les communications entre un serveur web et ses clients en SSL et en respectant le plus possible les règles de l'art, mais dans un contexte précis, celui de certificats <em>wildcard</em> délivrés par Gandi.</p>
 
-<p>Tous les fichiers sont présents dans l'arborescence partant de <a href="etc">/etc</a> : config Nginx, fichiers de certificat, …
+<p>Tous les fichiers sont présents dans le <a href="https://github.com/jlecour/ssl-gandi-nginx-debian/tree/master/etc">dépôt Git</a> : config Nginx, fichiers de certificat, …
 Ils correspondent à un vrai certificat, pour le domaine <code>www.example.com</code>, sauf que Gandi ne l'a jamais réellement généré et son contenu est bidon.</p>
 
 <p>La plupart des commandes décrites ici doit être exécutée par un utilisateur privilégié, comme <strong>root</strong>.

@@ -515,6 +515,10 @@ Un outil d'aide à la configuration de Apache/Nginx/HAProxy, basé sur les recom
 
 Mon [hébergeur favori][evolix] maintient un excellent [Wiki sur l'infogérance Linux/BSD][wiki-evolix]. Ils ont notamment un [article sur les certificats SSL][howto-ssl-evolix], avec des exemples plus précis de manipulation de certificats.
 
+**[Is TLS Fast Yet?][istlsfastyet]**
+
+Pour creuser encore plus la question des performances de la partie SSL/TLS, [Ilya Grigorik][igrigorik] propose des conseils, des comparatifs, des mesures, etc.
+
 # Contributions
 
 Merci à ceux qui m'ont relu, conseillé, proposé des corrections et clarifications.
@@ -535,3 +539,5 @@ Merci à ceux qui m'ont relu, conseillé, proposé des corrections et clarificat
 [ssllabs]: https://www.ssllabs.com/ssltest/analyze.html "SSLLabs"
 [cipherscan]: https://github.com/jvehent/cipherscan "CipherScan"
 [ssl-config-generator]: https://mozilla.github.io/server-side-tls/ssl-config-generator/ "SSL config generator"
+[istlsfastyet]: https://istlsfastyet.com "Is TLS Fast Yet?"
+[igrigorik]: https://twitter.com/igrigorik "Ilya Grigorik"

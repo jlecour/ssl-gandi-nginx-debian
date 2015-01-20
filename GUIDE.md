@@ -354,8 +354,8 @@ Comme nous mettons en place un certificat SSL _wildcard_ pour le domaine, il est
 ssl_certificate /etc/ssl/certs/wildcard_example_com.crt.pem;
 ssl_certificate_key /etc/ssl/private/wildcard_example_com.key.pem;
 
-ssl_session_timeout 5m;
-ssl_session_cache shared:SSL:50m;
+ssl_session_timeout 24h;
+ssl_session_cache shared:SSL:10m;
 
 ssl_dhparam /etc/ssl/dhparam.pem;
 

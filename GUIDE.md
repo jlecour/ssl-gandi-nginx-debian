@@ -339,16 +339,16 @@ server {
 
   server_name www.example.com;
 
-  include /etc/nginx/wildcard_example_com.conf;
+  include /etc/nginx/wildcard_example_com.ssl.conf;
 
   root /var/www/example;
   index index.htm index.html;
 }
 ````
 
-Comme nous mettons en place un certificat SSL _wildcard_ pour le domaine, il est probable que nous réutiliserons la partie SSL pour plusieurs configurations de sites (sous-domaines). Nous la placerons donc dans `/etc/nginx/wildcard_example_com.conf`.
+Comme nous mettons en place un certificat SSL _wildcard_ pour le domaine, il est probable que nous réutiliserons la partie SSL pour plusieurs configurations de sites (sous-domaines). Nous la placerons donc dans `/etc/nginx/wildcard_example_com.ssl.conf`.
 
-    → cat /etc/nginx/wildcard_example_com.conf
+    → cat /etc/nginx/wildcard_example_com.ssl.conf
 
 ````nginx
 ssl_certificate /etc/ssl/certs/wildcard_example_com.crt.pem;

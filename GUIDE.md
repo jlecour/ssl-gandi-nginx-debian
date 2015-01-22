@@ -365,7 +365,7 @@ ssl_prefer_server_ciphers on;
 
 ssl_stapling on;
 ssl_stapling_verify on;
-ssl_trusted_certificate /etc/ssl/gandi-standardssl-2.chain.pem;
+ssl_trusted_certificate /etc/ssl/certs/gandi-standardssl-2.chain.pem;
 
 resolver 127.0.0.1;
 ````

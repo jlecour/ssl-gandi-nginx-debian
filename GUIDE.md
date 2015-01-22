@@ -220,9 +220,9 @@ Pour générer le fichier de chaîne :
 
     → cd /etc/ssl/certs/ \
     && echo -n '' > wildcard_example_com.chain.pem \
-    && cat wildcard_example_com.chain.pem | tee -a wildcard_example_com.chain.pem \
-    && wget -O - https://www.gandi.net/static/CAs/GandiStandardSSLCA2.pem | tee -a wildcard_example_com.chain.pem> /dev/null \
-    && wget -O - http://crt.usertrust.com/USERTrustRSAAddTrustCA.crt | openssl x509 -inform DER -outform PEM | tee -a wildcard_example_com.chain.pem> /dev/null
+    && cat wildcard_example_com.chain.pem | tee -a wildcard_example_com.chain.pem> /dev/null \
+    && wget --no-check-certificate -q -O - https://www.gandi.net/static/CAs/GandiStandardSSLCA2.pem | tee -a wildcard_example_com.chain.pem> /dev/null \
+    &&wget -q -O - http://crt.usertrust.com/USERTrustRSAAddTrustCA.crt | openssl x509 -inform DER -outform PEM | tee -a wildcard_example_com.chain.pem> /dev/null
 
 Explications :
 
@@ -253,8 +253,8 @@ Voici la commande :
 
     → cd /etc/ssl/certs/ \
     && echo -n '' > gandi-standardssl-2.chain.pem \
-    && wget -O - https://www.gandi.net/static/CAs/GandiStandardSSLCA2.pem | tee -a gandi-standardssl-2.chain.pem> /dev/null \
-    && wget -O - http://crt.usertrust.com/USERTrustRSAAddTrustCA.crt | openssl x509 -inform DER -outform PEM | tee -a gandi-standardssl-2.chain.pem> /dev/null \
+    && wget --no-check-certificate -q -O - https://www.gandi.net/static/CAs/GandiStandardSSLCA2.pem | tee -a gandi-standardssl-2.chain.pem> /dev/null \
+    && wget -q -O - http://crt.usertrust.com/USERTrustRSAAddTrustCA.crt | openssl x509 -inform DER -outform PEM | tee -a gandi-standardssl-2.chain.pem> /dev/null \
     && cat AddTrust_External_Root.pem | tee -a gandi-standardssl-2.chain.pem
 
 ## Récapitulatif des fichiers de certificats
@@ -351,7 +351,7 @@ Comme nous mettons en place un certificat SSL _wildcard_ pour le domaine, il est
     → cat /etc/nginx/wildcard_example_com.ssl.conf
 
 ````nginx
-ssl_certificate /etc/ssl/certs/wildcard_example_com.crt.pem;
+ssl_certificate /etc/ssl/certs/wildcard_example_com.chain.pem;
 ssl_certificate_key /etc/ssl/private/wildcard_example_com.key.pem;
 
 ssl_session_timeout 24h;
@@ -365,7 +365,7 @@ ssl_prefer_server_ciphers on;
 
 ssl_stapling on;
 ssl_stapling_verify on;
-ssl_trusted_certificate /etc/ssl/gandi-standardssl-2.chain.pem;
+ssl_trusted_certificate /etc/ssl/certs/gandi-standardssl-2.chain.pem;
 
 resolver 127.0.0.1;
 ````

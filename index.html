@@ -283,8 +283,8 @@ A/q9Cm/STK80ZQkdnfdm7qnJFG/+vJ7LTdIN4L1vMxkaMg2c5q63FQpdPCAQI=
 <pre><code>→ cd /etc/ssl/certs/ \
 &amp;&amp; echo -n '' &gt; wildcard_example_com.chain.pem \
 &amp;&amp; cat wildcard_example_com.chain.pem | tee -a wildcard_example_com.chain.pem \
-&amp;&amp; wget -O - https://www.gandi.net/static/CAs/GandiStandardSSLCA2.pem | tee -a wildcard_example_com.chain.pem&gt; /dev/null \
-&amp;&amp; wget -O - http://crt.usertrust.com/USERTrustRSAAddTrustCA.crt | openssl x509 -inform DER -outform PEM | tee -a wildcard_example_com.chain.pem&gt; /dev/null
+&amp;&amp; wget -q -O - https://www.gandi.net/static/CAs/GandiStandardSSLCA2.pem | tee -a wildcard_example_com.chain.pem&gt; /dev/null \
+&amp;&amp; wget -q -O - http://crt.usertrust.com/USERTrustRSAAddTrustCA.crt | openssl x509 -inform DER -outform PEM | tee -a wildcard_example_com.chain.pem&gt; /dev/null
 </code></pre>
 
 <p>Explications :</p>
@@ -321,8 +321,8 @@ A/q9Cm/STK80ZQkdnfdm7qnJFG/+vJ7LTdIN4L1vMxkaMg2c5q63FQpdPCAQI=
 
 <pre><code>→ cd /etc/ssl/certs/ \
 &amp;&amp; echo -n '' &gt; gandi-standardssl-2.chain.pem \
-&amp;&amp; wget -O - https://www.gandi.net/static/CAs/GandiStandardSSLCA2.pem | tee -a gandi-standardssl-2.chain.pem&gt; /dev/null \
-&amp;&amp; wget -O - http://crt.usertrust.com/USERTrustRSAAddTrustCA.crt | openssl x509 -inform DER -outform PEM | tee -a gandi-standardssl-2.chain.pem&gt; /dev/null \
+&amp;&amp; wget -q -O - https://www.gandi.net/static/CAs/GandiStandardSSLCA2.pem | tee -a gandi-standardssl-2.chain.pem&gt; /dev/null \
+&amp;&amp; wget -q -O - http://crt.usertrust.com/USERTrustRSAAddTrustCA.crt | openssl x509 -inform DER -outform PEM | tee -a gandi-standardssl-2.chain.pem&gt; /dev/null \
 &amp;&amp; cat AddTrust_External_Root.pem | tee -a gandi-standardssl-2.chain.pem
 </code></pre>
 
@@ -422,7 +422,7 @@ A/q9Cm/STK80ZQkdnfdm7qnJFG/+vJ7LTdIN4L1vMxkaMg2c5q63FQpdPCAQI=
 <pre><code>→ cat /etc/nginx/wildcard_example_com.ssl.conf
 </code></pre>
 
-<div class="highlight highlight-nginx"><pre>ssl_certificate /etc/ssl/certs/wildcard_example_com.crt.pem;
+<div class="highlight highlight-nginx"><pre>ssl_certificate /etc/ssl/certs/wildcard_example_com.chain.pem;
 ssl_certificate_key /etc/ssl/private/wildcard_example_com.key.pem;
 
 ssl_session_timeout <span class="pl-c1">24h</span>;
@@ -436,7 +436,7 @@ ssl_prefer_server_ciphers<span class="pl-c1"> on</span>;
 
 ssl_stapling<span class="pl-c1"> on</span>;
 ssl_stapling_verify<span class="pl-c1"> on</span>;
-ssl_trusted_certificate /etc/ssl/gandi-standardssl-2.chain.pem;
+ssl_trusted_certificate /etc/ssl/certs/gandi-standardssl-2.chain.pem;
 
 <span class="pl-k">resolver</span> <span class="pl-s1">127.0.0.1</span>;</pre></div>
 
@@ -626,6 +626,7 @@ Julien est OpSec chez Mozilla. Il est l'auteur de <a href="https://wiki.mozilla.
 <li><a href="https://github.com/dgeo">Geoffroy Desvernay</a></li>
 <li><a href="http://jve.linuxwall.info/" title="Julien Véhent">Julien Véhent</a></li>
 <li><a href="https://twitter.com/mayeu">Mayeu</a></li>
+<li><a href="https://github.com/canarduck">Canarduck</a></li>
 </ul>
       </section>
     </div>

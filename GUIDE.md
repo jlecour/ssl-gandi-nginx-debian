@@ -221,8 +221,8 @@ Pour générer le fichier de chaîne :
     → cd /etc/ssl/certs/ \
     && echo -n '' > wildcard_example_com.chain.pem \
     && cat wildcard_example_com.chain.pem | tee -a wildcard_example_com.chain.pem \
-    && wget -O - https://www.gandi.net/static/CAs/GandiStandardSSLCA2.pem | tee -a wildcard_example_com.chain.pem> /dev/null \
-    && wget -O - http://crt.usertrust.com/USERTrustRSAAddTrustCA.crt | openssl x509 -inform DER -outform PEM | tee -a wildcard_example_com.chain.pem> /dev/null
+    && wget -q -O - https://www.gandi.net/static/CAs/GandiStandardSSLCA2.pem | tee -a wildcard_example_com.chain.pem> /dev/null \
+    && wget -q -O - http://crt.usertrust.com/USERTrustRSAAddTrustCA.crt | openssl x509 -inform DER -outform PEM | tee -a wildcard_example_com.chain.pem> /dev/null
 
 Explications :
 
@@ -253,8 +253,8 @@ Voici la commande :
 
     → cd /etc/ssl/certs/ \
     && echo -n '' > gandi-standardssl-2.chain.pem \
-    && wget -O - https://www.gandi.net/static/CAs/GandiStandardSSLCA2.pem | tee -a gandi-standardssl-2.chain.pem> /dev/null \
-    && wget -O - http://crt.usertrust.com/USERTrustRSAAddTrustCA.crt | openssl x509 -inform DER -outform PEM | tee -a gandi-standardssl-2.chain.pem> /dev/null \
+    && wget -q -O - https://www.gandi.net/static/CAs/GandiStandardSSLCA2.pem | tee -a gandi-standardssl-2.chain.pem> /dev/null \
+    && wget -q -O - http://crt.usertrust.com/USERTrustRSAAddTrustCA.crt | openssl x509 -inform DER -outform PEM | tee -a gandi-standardssl-2.chain.pem> /dev/null \
     && cat AddTrust_External_Root.pem | tee -a gandi-standardssl-2.chain.pem
 
 ## Récapitulatif des fichiers de certificats

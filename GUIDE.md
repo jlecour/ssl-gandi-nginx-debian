@@ -521,7 +521,9 @@ Pour creuser encore plus la question des performances de la partie SSL/TLS, [Ily
 
 # Contributions
 
-Merci à ceux qui m'ont relu, conseillé, proposé des corrections et clarifications.
+Ce guide est écrit et tenu à jour par [Jérémy Lecour](https://github.com/jlecour/).
+
+Merci à ceux qui l'ont relu, conseillé, proposé des corrections et clarifications :
 
 - [Jef Mathiot](https://github.com/jefmathiot)
 - [Jérôme Pinguet](https://github.com/jeromecc)

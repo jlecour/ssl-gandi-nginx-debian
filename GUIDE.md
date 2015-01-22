@@ -351,7 +351,7 @@ Comme nous mettons en place un certificat SSL _wildcard_ pour le domaine, il est
     → cat /etc/nginx/wildcard_example_com.ssl.conf
 
 ````nginx
-ssl_certificate /etc/ssl/certs/wildcard_example_com.crt.pem;
+ssl_certificate /etc/ssl/certs/wildcard_example_com.chain.pem;
 ssl_certificate_key /etc/ssl/private/wildcard_example_com.key.pem;
 
 ssl_session_timeout 24h;

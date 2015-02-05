@@ -340,11 +340,14 @@ server {
   server_name www.example.com;
 
   include /etc/nginx/wildcard_example_com.ssl.conf;
+  add_header Strict-Transport-Security max-age=31536000;
 
   root /var/www/example;
   index index.htm index.html;
 }
 ````
+
+Ici, on ajoute manuellement l'en-tête `Strict-Transport-Security` avec une valeur fixée à `1 an`. Si on utilise une application web qui place cet en-tête elle-même, c'est inutile de le rappeler ici.
 
 Comme nous mettons en place un certificat SSL _wildcard_ pour le domaine, il est probable que nous réutiliserons la partie SSL pour plusieurs configurations de sites (sous-domaines). Nous la placerons donc dans `/etc/nginx/wildcard_example_com.ssl.conf`.
 

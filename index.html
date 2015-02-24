@@ -285,7 +285,7 @@ A/q9Cm/STK80ZQkdnfdm7qnJFG/+vJ7LTdIN4L1vMxkaMg2c5q63FQpdPCAQI=
 
 <pre><code>→ cd /etc/ssl/certs/ \
 &amp;&amp; echo -n '' &gt; wildcard_example_com.chain.pem \
-&amp;&amp; cat wildcard_example_com.chain.pem | tee -a wildcard_example_com.chain.pem \
+&amp;&amp; cat wildcard_example_com.crt.pem | tee -a wildcard_example_com.chain.pem \
 &amp;&amp; wget -q -O - https://www.gandi.net/static/CAs/GandiStandardSSLCA2.pem | tee -a wildcard_example_com.chain.pem&gt; /dev/null \
 &amp;&amp; wget -q -O - http://crt.usertrust.com/USERTrustRSAAddTrustCA.crt | openssl x509 -inform DER -outform PEM | tee -a wildcard_example_com.chain.pem&gt; /dev/null
 </code></pre>

@@ -221,8 +221,7 @@ Pour générer le fichier de chaîne :
     → cd /etc/ssl/certs/ \
     && echo -n '' > wildcard_example_com.chain.pem \
     && cat wildcard_example_com.crt.pem | tee -a wildcard_example_com.chain.pem \
-    && wget -q -O - https://www.gandi.net/static/CAs/GandiStandardSSLCA2.pem | tee -a wildcard_example_com.chain.pem> /dev/null \
-    && wget -q -O - http://crt.usertrust.com/USERTrustRSAAddTrustCA.crt | openssl x509 -inform DER -outform PEM | tee -a wildcard_example_com.chain.pem> /dev/null
+    && wget -q -O - https://www.gandi.net/static/CAs/GandiStandardSSLCA2.pem | tee -a wildcard_example_com.chain.pem> /dev/null
 
 Explications :
 
@@ -231,6 +230,7 @@ Explications :
 - on ajoute le certificat du domaine (directement au format `PEM`) ;
 - on ajoute le certificat de Gandi (directement au format `PEM`) ;
 - on ajoute le certificat _cross-signed_ (au format `DER` il faut donc le convertir avant de l'ajouter) ;
+- le certificat _cross signed_ a été rajouté par Gandi dans son fichier, pour nous éviter une étape ;
 - l'utilisation de `tee` permet d'ajouter un `sudo` si besoin.
 
 Pour des certificats **SSL Pro**, le certificat intermédiaire de Gandi est différent, mais le principe et les manipulations sont identiques.
@@ -254,7 +254,6 @@ Voici la commande :
     → cd /etc/ssl/certs/ \
     && echo -n '' > gandi-standardssl-2.chain.pem \
     && wget -q -O - https://www.gandi.net/static/CAs/GandiStandardSSLCA2.pem | tee -a gandi-standardssl-2.chain.pem> /dev/null \
-    && wget -q -O - http://crt.usertrust.com/USERTrustRSAAddTrustCA.crt | openssl x509 -inform DER -outform PEM | tee -a gandi-standardssl-2.chain.pem> /dev/null \
     && cat AddTrust_External_Root.pem | tee -a gandi-standardssl-2.chain.pem
 
 ## Récapitulatif des fichiers de certificats

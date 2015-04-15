@@ -534,6 +534,7 @@ Merci à ceux qui l'ont relu, conseillé, proposé des corrections et clarificat
 - [Julien Véhent][jvehent]
 - [Mayeu](https://twitter.com/mayeu)
 - [Canarduck](https://github.com/canarduck)
+- [kslimani](https://github.com/kslimani)
 
 [evolix]: http://www.evolix.fr "Evolix"
 [howto-ssl-evolix]: http://trac.evolix.net/infogerance/wiki/HowtoSSL "Howto SSL"

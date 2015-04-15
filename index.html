@@ -1,40 +1,25 @@
 <!DOCTYPE html>
-<html lang="fr">
-
+<html lang="en-us">
   <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="description" content="Gandi SSL avec Nginx : Un guide pour configurer un certificat SSL (Gandi) pour Nginx sur Debian">
-
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-
-    <title>Gandi SSL avec Nginx</title>
-    <link rel="publisher" href="https://plus.google.com/+JérémyLecour/"/>
-    <meta name="twitter:site" content="@jlecour">
-    <meta content="fr" property="og:locale">
+    <meta charset="UTF-8">
+    <title>Gandi SSL avec Nginx by jlecour</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
   </head>
-
   <body>
+    <section class="page-header">
+      <h1 class="project-name">Gandi SSL avec Nginx</h1>
+      <h2 class="project-tagline">Un guide pour configurer un certificat SSL (Gandi) pour Nginx sur Debian</h2>
+      <a href="https://github.com/jlecour/ssl-gandi-nginx-debian" class="btn">View on GitHub</a>
+      <a href="https://github.com/jlecour/ssl-gandi-nginx-debian/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/jlecour/ssl-gandi-nginx-debian/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/jlecour/ssl-gandi-nginx-debian">View on GitHub</a>
-
-          <h1 id="project_title">Gandi SSL avec Nginx</h1>
-          <h2 id="project_tagline">Un guide pour configurer un certificat SSL (Gandi) pour Nginx sur Debian</h2>
-
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/jlecour/ssl-gandi-nginx-debian/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/jlecour/ssl-gandi-nginx-debian/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <p><strong>Sommaire</strong> :</p>
+    <section class="main-content">
+      <p><strong>Sommaire</strong> :</p>
 
 <ol>
 <li><a href="#1-objectif">Objectif</a></li>
@@ -219,7 +204,7 @@ E0pV7+shRPoK7jguy6zzSHK1ygWnqTSn8TePgtIXOoVcZoH6jQBfcA==
 
 <p>Dans un mécanisme de chiffrement d'un échange à partir d'une clé privée, le problème est que si on met la main sur cette clé, tous les échanges passés et futurs deviennent lisibles. La révocation d'un certificat ne protège pas le déchiffrement de ce qui a été chiffré dans le passé. Dans une situation de surveillance des échanges, on peut tout intercepter/stocker et se dire qu'il sera peut-être possible de tout déchiffrer plus tard. Les agences de renseignement sont soupçonnées d'appliquer ce genre de stratégie.</p>
 
-<p>Le principe de <strong>Forward Secrecy</strong> est que le client et le serveur se mettent d'accord sur une clé temporaire de chiffrement. Cette clé restera accessible uniquement le temps de la session TLS. Si une de ces clés est récupérée ou découverte, seuls les échanges de la session en question seront compromis.</p>
+<p>Le principe de <strong>Forward Secrecy</strong> est que le client et le serveur se mettent d'accord sur une clé temporaire de chiffrement. Cette clé restera accessible uniquement le temps de la session TLS. Si une de ces clés est récupérée ou découverte, seules les échanges de la session en question seront compromis.</p>
 
 <p>Pour faire fonctionner ce mécanisme, le client et le serveur doivent procéder à un <strong>échange de clés Diffie-Hellman</strong>. Le serveur va communiquer au client un (très grand) nombre premier et un générateur. Pour éviter un compromission de type <a href="http://fr.wikipedia.org/wiki/Attaque_de_l%27homme_du_milieu" title="Man In The Middle">MITM</a>, le serveur signe l'échange avec sa clé privée. Les paramètres de l'échange sont déterminés à l'avance et stockés sur le serveur.</p>
 
@@ -285,7 +270,7 @@ A/q9Cm/STK80ZQkdnfdm7qnJFG/+vJ7LTdIN4L1vMxkaMg2c5q63FQpdPCAQI=
 
 <pre><code>→ cd /etc/ssl/certs/ \
 &amp;&amp; echo -n '' &gt; wildcard_example_com.chain.pem \
-&amp;&amp; cat wildcard_example_com.crt.pem | tee -a wildcard_example_com.chain.pem \
+&amp;&amp; cat wildcard_example_com.chain.pem | tee -a wildcard_example_com.chain.pem \
 &amp;&amp; wget -q -O - https://www.gandi.net/static/CAs/GandiStandardSSLCA2.pem | tee -a wildcard_example_com.chain.pem&gt; /dev/null \
 &amp;&amp; wget -q -O - http://crt.usertrust.com/USERTrustRSAAddTrustCA.crt | openssl x509 -inform DER -outform PEM | tee -a wildcard_example_com.chain.pem&gt; /dev/null
 </code></pre>
@@ -378,23 +363,23 @@ A/q9Cm/STK80ZQkdnfdm7qnJFG/+vJ7LTdIN4L1vMxkaMg2c5q63FQpdPCAQI=
 </code></pre>
 
 <div class="highlight highlight-nginx"><pre><span class="pl-k">user</span> www-data;
-<span class="pl-k">worker_processes</span> <span class="pl-s1">32</span>;
+<span class="pl-k">worker_processes</span> <span class="pl-s">32</span>;
 <span class="pl-k">pid</span> /var/run/nginx.pid;
 
-<span class="pl-st">events</span> {
-  <span class="pl-k">worker_connections</span> <span class="pl-s1">768</span>;
+<span class="pl-k">events</span> {
+  <span class="pl-k">worker_connections</span> <span class="pl-s">768</span>;
 }
 
-<span class="pl-st">http</span> {
+<span class="pl-k">http</span> {
   <span class="pl-k">sendfile</span><span class="pl-c1"> on</span>;
   <span class="pl-k">tcp_nopush</span><span class="pl-c1"> on</span>;
   <span class="pl-k">tcp_nodelay</span><span class="pl-c1"> on</span>;
-  <span class="pl-k">keepalive_timeout</span> <span class="pl-s1">65</span>;
+  <span class="pl-k">keepalive_timeout</span> <span class="pl-s">65</span>;
 
   <span class="pl-k">include</span> /etc/nginx/mime.types;
   <span class="pl-k">default_type</span> application/octet-stream;
 
-  access_log /var/log/nginx/access.log;
+  <span class="pl-k">access_log</span> /var/log/nginx/access.log;
   <span class="pl-k">error_log</span> /var/log/nginx/error.log;
 
   <span class="pl-k">include</span> /etc/nginx/sites-enabled/*;
@@ -405,12 +390,12 @@ A/q9Cm/STK80ZQkdnfdm7qnJFG/+vJ7LTdIN4L1vMxkaMg2c5q63FQpdPCAQI=
 <pre><code>→ cat /etc/nginx/sites-enabled/www_example_com.conf
 </code></pre>
 
-<div class="highlight highlight-nginx"><pre><span class="pl-st">server</span> {
-  <span class="pl-k">listen</span> <span class="pl-s1">80</span>;
-  rewrite <span class="pl-sr">^ https://$</span>host<span class="pl-vo">$request_uri</span>? permanent;
+<div class="highlight highlight-nginx"><pre><span class="pl-k">server</span> {
+  <span class="pl-k">listen</span> <span class="pl-s">80</span>;
+  <span class="pl-k">rewrite</span> <span class="pl-sr">^ </span>https://<span class="pl-smi">$host$request_uri</span>? permanent;
 }
-<span class="pl-st">server</span> {
-  <span class="pl-k">listen</span> <span class="pl-s1">443</span> ssl;
+<span class="pl-k">server</span> {
+  <span class="pl-k">listen</span> <span class="pl-s">443</span> ssl;
 
   <span class="pl-k">server_name</span> www.example.com;
 
@@ -428,23 +413,23 @@ A/q9Cm/STK80ZQkdnfdm7qnJFG/+vJ7LTdIN4L1vMxkaMg2c5q63FQpdPCAQI=
 <pre><code>→ cat /etc/nginx/wildcard_example_com.ssl.conf
 </code></pre>
 
-<div class="highlight highlight-nginx"><pre>ssl_certificate /etc/ssl/certs/wildcard_example_com.chain.pem;
-ssl_certificate_key /etc/ssl/private/wildcard_example_com.key.pem;
+<div class="highlight highlight-nginx"><pre><span class="pl-k">ssl_certificate</span> /etc/ssl/certs/wildcard_example_com.chain.pem;
+<span class="pl-k">ssl_certificate_key</span> /etc/ssl/private/wildcard_example_com.key.pem;
 
-ssl_session_timeout <span class="pl-c1">24h</span>;
-ssl_session_cache shared:SSL:10m;
+<span class="pl-k">ssl_session_timeout</span> <span class="pl-c1">24h</span>;
+<span class="pl-k">ssl_session_cache</span> shared:SSL:10m;
 
-ssl_dhparam /etc/ssl/dhparam.pem;
+<span class="pl-k">ssl_dhparam</span> /etc/ssl/dhparam.pem;
 
-ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
-ssl_ciphers <span class="pl-s1">'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA'</span>;
-ssl_prefer_server_ciphers<span class="pl-c1"> on</span>;
+<span class="pl-k">ssl_protocols</span> TLSv1 TLSv1.1 TLSv1.2;
+<span class="pl-k">ssl_ciphers</span> <span class="pl-s">'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA'</span>;
+<span class="pl-k">ssl_prefer_server_ciphers</span><span class="pl-c1"> on</span>;
 
-ssl_stapling<span class="pl-c1"> on</span>;
-ssl_stapling_verify<span class="pl-c1"> on</span>;
-ssl_trusted_certificate /etc/ssl/certs/gandi-standardssl-2.chain.pem;
+<span class="pl-k">ssl_stapling</span> on;
+<span class="pl-k">ssl_stapling_verify</span> on;
+<span class="pl-k">ssl_trusted_certificate</span> /etc/ssl/certs/gandi-standardssl-2.chain.pem;
 
-<span class="pl-k">resolver</span> <span class="pl-s1">127.0.0.1</span>;</pre></div>
+<span class="pl-k">resolver</span> <span class="pl-s">127.0.0.1</span>;</pre></div>
 
 <p><em>Ci-dessous, le nom des directives est cliquable et conduit vers la documentation de Nginx.</em></p>
 
@@ -458,7 +443,7 @@ ssl_trusted_certificate /etc/ssl/certs/gandi-standardssl-2.chain.pem;
 <li>
 <a href="http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_dhparam">ssl_dhparam</a> indique l'emplacement du fichier des paramètres (généré plus haut) pour l'échange de clés Diffie-Hellman.</li>
 <li>
-<a href="http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_protocols">ssl_protocols</a> est la liste des protocoles acceptés par le serveur. À ce jour, seules les versions <code>TLSv1</code>, <code>TLSv1.1</code> et <code>TLSv1.2</code> de TLS sont acceptables. Plus d'info sur l'<a href="http://fr.wikipedia.org/wiki/Transport_Layer_Security#Historique">historique de SSL/TLS</a> sur Wikipedia. Les failles récentes de <code>SSLv3</code> nous ont poussés à le retirer autant que possible des listes de protocoles utilisés.</li>
+<a href="http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_protocols">ssl_protocols</a> est la liste des protocoles de chiffrement acceptés par le serveur. À ce jour, seuls les versions <code>TLSv1</code>, <code>TLSv1.1</code> et <code>TLSv1.2</code> de TLS sont acceptables. Plus d'info sur l'<a href="http://fr.wikipedia.org/wiki/Transport_Layer_Security#Historique">historique de SSL/TLS</a> sur Wikipedia. Les failles récentes de <code>SSLv3</code> nous ont poussés à le retirer autant que possible des listes de protocoles utilisés.</li>
 <li>
 <a href="http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_ciphers">ssl_ciphers</a> est la liste ordonnée des ciphers (algorithmes de chiffrement) qui sont acceptés. La liste est directement issue du <a href="https://mozilla.github.io/server-side-tls/ssl-config-generator/" title="SSL config generator">générateur de configuration</a> de <a href="https://wiki.mozilla.org/Security/Server_Side_TLS" title="Server Side TLS">Server-Side TLS</a>
 </li>
@@ -623,7 +608,7 @@ Julien est OpSec chez Mozilla. Il est l'auteur de <a href="https://wiki.mozilla.
 <h1>
 <a id="contributions" class="anchor" href="#contributions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contributions</h1>
 
-<p>Ce guide est écrit et tenu à jour par <a href="https://github.com/jlecour/" rel="me">Jérémy Lecour</a>.</p>
+<p>Ce guide est écrit et tenu à jour par <a href="https://github.com/jlecour/">Jérémy Lecour</a>.</p>
 
 <p>Merci à ceux qui l'ont relu, conseillé, proposé des corrections et clarifications :</p>
 
@@ -636,18 +621,16 @@ Julien est OpSec chez Mozilla. Il est l'auteur de <a href="https://wiki.mozilla.
 <li><a href="https://twitter.com/mayeu">Mayeu</a></li>
 <li><a href="https://github.com/canarduck">Canarduck</a></li>
 </ul>
-      </section>
-    </div>
 
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Gandi SSL avec Nginx maintained by <a href="https://github.com/jlecour">jlecour</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/jlecour/ssl-gandi-nginx-debian">Gandi SSL avec Nginx</a> is maintained by <a href="https://github.com/jlecour">jlecour</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
       </footer>
-    </div>
 
-              <script type="text/javascript">
+    </section>
+
+            <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
           </script>
@@ -658,6 +641,6 @@ Julien est OpSec chez Mozilla. Il est l'auteur de <a href="https://wiki.mozilla.
             } catch(err) {}
           </script>
 
-
   </body>
 </html>
+

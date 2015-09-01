@@ -78,7 +78,7 @@ Pour éviter de faire transiter la clé privée dans un dossier non protégé, o
 
 ````
 Country Name (2 letter code) [AU]:FR
-State or Province Name (full name) [Some-State]:
+State or Province Name (full name) [Some-State]:""
 Locality Name (eg, city) []:Marseille
 Organization Name (eg, company) [Internet Widgits Pty Ltd]:Example Inc.
 Organizational Unit Name (eg, section) []:
